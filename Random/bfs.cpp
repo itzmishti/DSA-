@@ -65,7 +65,7 @@ int main()
  }
  
  vector <int> bfs=bfsTrans(adj,v);
- for(auto &i:bfs)
+ for(auto i:bfs)
  {
      cout<<i<<"->";
  }
