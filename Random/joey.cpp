@@ -13,6 +13,7 @@ int count(string s,char c)
     }
     return count;
 }
+//Approach:Just count the special characters like w in two x in six
 int sumOfString(string s)
 {
     int zero,one,two,three,four,five,six,seven,eight,nine;
