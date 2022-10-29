@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 using namespace std;
+/*program assigns factions according to popular movie series divergent*/
 int main()
 {
     int x,y,z,c;

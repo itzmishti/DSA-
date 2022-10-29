@@ -5,7 +5,7 @@ public:
     int k=0;
     for(int i=m;i<=m+n-1;i++)
     {
-       nums1[i] =nums2[k];
+       nums1[i] =nums2[k];//adds element to end of first array
         k++;
     }
     sort(nums1.begin(),nums1.end());
