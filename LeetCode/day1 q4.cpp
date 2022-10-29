@@ -6,10 +6,10 @@ public:
         for(int i=0;i<nums.size();i++)
         {
             curr=curr+nums[i];
-            maxSum=max(curr,maxSum);
+            maxSum=max(curr,maxSum);//check bigger element
             if(0>curr)
                 curr=0;
         }
-        return maxSum;
+        return maxSum;//returns biggest subarray
     }
 };

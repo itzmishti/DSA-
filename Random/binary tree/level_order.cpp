@@ -9,6 +9,9 @@
  *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
  * };
  */
+/*Level order traversal traverses based on level of tree.
+BFS or Breadth First Search*/
+
 class Solution {
 public:
     vector<vector<int>> levelOrder(TreeNode* root) {

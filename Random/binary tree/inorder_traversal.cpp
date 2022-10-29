@@ -9,6 +9,10 @@
  *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
  * };
  */
+/*
+Inorder traversal stores or displays the array in left->root->right order
+For binary search trees it displays the list of numbers in ascending order
+*/
 class Solution {
 public:   
     vector<int> inorderTraversal(TreeNode* root) {
