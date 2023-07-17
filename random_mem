@@ -5,23 +5,40 @@ h = hpy()
 
 gc.collect()
 
-# Capture the first heap snapshot
 heap1 = h.heap()
+
+# Perform some actions or operations that may cause heap changes
 
 gc.collect()
 
-# Capture the second heap snapshot
 heap2 = h.heap()
 
-# Compute the difference between the two heaps
-heap_diff = heap2 - heap1
+# Calculate the difference between heap2 and heap1
+diff_heap = heap2 - heap1
 
 module_stats = {}
-for obj in heap_diff:
+referent_stats = {}
+
+# Iterate over the difference heap
+for obj in diff_heap:
     module_name = obj.__class__.__module__
     if module_name not in module_stats:
         module_stats[module_name] = 0
     module_stats[module_name] += obj.size
+    
+    referents = obj.referrers()
+    for ref in referents:
+        referent_str = str(ref)
+        if referent_str not in referent_stats:
+            referent_stats[referent_str] = 0
+        referent_stats[referent_str] += obj.size
 
+# Print the module statistics
+print("Module statistics:")
 for module_name, size in module_stats.items():
-    print(f"Module: {module_name}, Size Difference: {size}")
+    print(f"Module: {module_name}, Size: {size}")
+
+# Print the referent statistics
+print("\nReferent statistics:")
+for referent_str, size in referent_stats.items():
+    print(f"Referent: {referent_str}, Size: {size}")
