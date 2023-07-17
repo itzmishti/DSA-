@@ -26,7 +26,7 @@ for obj in diff_heap:
         module_stats[module_name] = 0
     module_stats[module_name] += obj.size
     
-    referents = obj.referrers()
+    referents = gc.get_referrers(obj)
     for ref in referents:
         referent_str = str(ref)
         if referent_str not in referent_stats:
