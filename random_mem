@@ -1,33 +1,27 @@
-import matplotlib.pyplot as plt
 from guppy import hpy
+import gc
 
-# Create an instance of hpy
 h = hpy()
 
-# Initialize lists to store data points
-call_numbers = []
-heap_growth = []
+gc.collect()
 
-# Code execution or operations that may cause memory leaks
-my_list = []
-prev_heap_size = 0
-for i in range(1000000):
-    my_list.append(i)
+# Capture the first heap snapshot
+heap1 = h.heap()
 
-    # Get heap size and calculate the difference
-    heap_size = h.heap().size
-    diff = heap_size - prev_heap_size
+gc.collect()
 
-    # Append the call number and heap growth
-    call_numbers.append(i)
-    heap_growth.append(diff)
+# Capture the second heap snapshot
+heap2 = h.heap()
 
-    # Update the previous heap size
-    prev_heap_size = heap_size
+# Compute the difference between the two heaps
+heap_diff = heap2 - heap1
 
-# Plotting the heap growth vs call number
-plt.plot(call_numbers, heap_growth)
-plt.xlabel("Call Number")
-plt.ylabel("Heap Growth")
-plt.title("Heap Growth vs Call Number")
-plt.show()
+module_stats = {}
+for obj in heap_diff:
+    module_name = obj.__class__.__module__
+    if module_name not in module_stats:
+        module_stats[module_name] = 0
+    module_stats[module_name] += obj.size
+
+for module_name, size in module_stats.items():
+    print(f"Module: {module_name}, Size Difference: {size}")
