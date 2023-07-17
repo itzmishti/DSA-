@@ -1,67 +1,21 @@
-Potential causes of memory leaks in Python:
+from guppy import hpy
+from pprint import pprint
 
-Unreleased Resources: Failing to release resources like file handles, network connections, or database connections can lead to memory leaks. Ensure that you close or release resources properly using the appropriate methods or context managers.
+def create_large_list():
+    return [i for i in range(1000000)]
 
-Example:
+# Create initial heap snapshot
+h = hpy()
+h.setrelheap()
 
-python
-Copy code
-# Incorrect usage
-file = open("data.txt", "r")
-data = file.read()
-# File is not closed
+# Create a large list
+large_list = create_large_list()
 
-# Correct usage
-with open("data.txt", "r") as file:
-    data = file.read()
-# File is automatically closed
-Circular References: Circular references occur when objects refer to each other, preventing them from being garbage collected. This can happen, for example, when using bidirectional relationships in object-oriented programming. Break circular references by explicitly setting references to None or rethinking your design.
+# Capture the final heap state
+h.setref()
 
-Example:
+# Compare the two heap snapshots
+diff = h.heap() - h.heaprel()
 
-python
-Copy code
-# Circular reference
-class Node:
-    def __init__(self):
-        self.next = None
-
-node1 = Node()
-node2 = Node()
-node1.next = node2
-node2.next = node1
-
-# Break circular reference
-node1.next = None
-node2.next = None
-Large Data Structures: Creating and retaining large data structures in memory can cause memory leaks, especially if they are not properly cleaned up after use. Ensure you free up memory by deleting unnecessary objects or using generators and iterators instead of lists where possible.
-
-Example:
-
-python
-Copy code
-# Creating a large list
-data = [x for x in range(1000000)]
-
-# Freeing up memory
-del data
-Caching: Improper caching mechanisms can lead to memory leaks if the cache keeps growing without proper eviction policies. Make sure you have a strategy to limit the cache size and remove old or unused entries.
-
-Example:
-
-python
-Copy code
-# Using a cache
-cache = {}
-
-def get_data(key):
-    if key not in cache:
-        # Load data from the source
-        data = load_data(key)
-        cache[key] = data
-    return cache[key]
-External Libraries: Memory leaks can also occur due to bugs in external libraries. Ensure that you are using the latest versions of the libraries you depend on and report any memory leak issues to the library maintainers.
-
-Improper Use of Global Variables: Global variables that are not properly managed can cause memory leaks. Assigning large objects to global variables that are not released when no longer needed can lead to memory consumption. Avoid excessive use of global variables and make sure to release them when they are no longer required.
-
-Remember that memory leaks are not always obvious and may require careful debugging and profiling to identify and fix. Using tools like memory profilers or garbage collectors can help in detecting and resolving memory leaks in Python.
+# Print the difference
+pprint(diff)
