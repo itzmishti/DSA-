@@ -1,21 +1,33 @@
+import matplotlib.pyplot as plt
 from guppy import hpy
-from pprint import pprint
 
-def create_large_list():
-    return [i for i in range(1000000)]
-
-# Create initial heap snapshot
+# Create an instance of hpy
 h = hpy()
-h.setrelheap()
 
-# Create a large list
-large_list = create_large_list()
+# Initialize lists to store data points
+call_numbers = []
+heap_growth = []
 
-# Capture the final heap state
-h.setref()
+# Code execution or operations that may cause memory leaks
+my_list = []
+prev_heap_size = 0
+for i in range(1000000):
+    my_list.append(i)
 
-# Compare the two heap snapshots
-diff = h.heap() - h.heaprel()
+    # Get heap size and calculate the difference
+    heap_size = h.heap().size
+    diff = heap_size - prev_heap_size
 
-# Print the difference
-pprint(diff)
+    # Append the call number and heap growth
+    call_numbers.append(i)
+    heap_growth.append(diff)
+
+    # Update the previous heap size
+    prev_heap_size = heap_size
+
+# Plotting the heap growth vs call number
+plt.plot(call_numbers, heap_growth)
+plt.xlabel("Call Number")
+plt.ylabel("Heap Growth")
+plt.title("Heap Growth vs Call Number")
+plt.show()
