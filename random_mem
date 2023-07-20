@@ -1,1 +1,13 @@
-I am currently engaged in the cost optimization aspect of this project. Our team has identified that the pods responsible for deploying these services are exhibiting considerable memory consumption. As part of my internship project, my primary objective is to detect and address these memory leaks through the exploration of viable strategies for resolution.
+Memory Consumption in Deployment Pods
+The pods responsible for deploying services are experiencing significant memory consumption.
+Project Objective
+
+As part of my internship project, the primary goal is to detect and resolve memory leaks in the deployment pods.
+Key Approach: Utilizing exploration strategies for effective resolution.
+Importance
+
+Addressing memory leaks will lead to cost optimization and enhance overall system efficiency.
+Key Challenges
+
+Understanding the root causes of memory leaks.
+Implementing effective resolution strategies.
