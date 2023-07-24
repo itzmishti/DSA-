@@ -1,11 +1,1 @@
-Sure, here's the information divided into points:
-
-1. Evaluation of Packages: Several packages were tested, including Obigraph, Scalene, memory_profiler, and pympler.
-
-2. Identifying the Issue: It was established that when pandas objects are executed with the flask server, a documented leak occurs.
-
-3. Suspected Cause: The investigation led to the suspicion that a dataframe object might be the root cause of the leak.
-
-4. Replication Attempt: To replicate the leak, the flask server was run on a local machine. Instead of making API calls to the actual pods, it was connected to the database and used in this scenario.
-
-5. Successful Capture: The Psutils module effectively captured the observed leak during the replication attempt.
+After conducting a thorough assessment, we can confidently state that all database connections have been successfully closed. Additionally, diligent efforts were made to investigate cyclic references; however, despite removing them, no noticeable changes in the memory leak were observed, leading us to rule out cyclic references as the root cause of the issue.
