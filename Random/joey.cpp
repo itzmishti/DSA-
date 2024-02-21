@@ -1,17 +1,19 @@
 import React, { useState } from 'react';
-import axios from 'axios';
 import { CSVLink } from 'react-csv';
 
 function App() {
   const [jsonData, setJsonData] = useState(null);
+  const [argument1, setArgument1] = useState('initialValue');
+  const [argument2, setArgument2] = useState('initialValue');
 
-  // Function to fetch data from API
-  const fetchData = async () => {
+  // Function to call your API and retrieve data
+  const callYourApiFunction = async (arg1, arg2) => {
     try {
-      const response = await axios.get('YOUR_API_ENDPOINT');
-      setJsonData(response.data);
+      // Call your API function here with arguments
+      const response = await yourApiFunction(arg1, arg2);
+      setJsonData(response);
     } catch (error) {
-      console.error('Error fetching data:', error);
+      console.error('Error calling your API:', error);
     }
   };
 
@@ -33,7 +35,7 @@ function App() {
 
   return (
     <div>
-      <button onClick={fetchData}>Fetch Data</button>
+      <button onClick={() => callYourApiFunction(argument1, argument2)}>Fetch Data</button>
       {jsonData && (
         <div>
           <h2>Data:</h2>
@@ -51,5 +53,16 @@ function App() {
     </div>
   );
 }
+
+// Replace this with your actual API function
+const yourApiFunction = async (arg1, arg2) => {
+  // Example of fetching data from an API with arguments
+  const response = await fetch(`YOUR_API_ENDPOINT?arg1=${arg1}&arg2=${arg2}`);
+  if (!response.ok) {
+    throw new Error('Failed to fetch data from the API');
+  }
+  const data = await response.json();
+  return data;
+};
 
 export default App;
