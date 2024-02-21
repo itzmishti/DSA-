@@ -1,68 +1,77 @@
 import React, { useState } from 'react';
-import { CSVLink } from 'react-csv';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 
-function App() {
-  const [jsonData, setJsonData] = useState(null);
-  const [argument1, setArgument1] = useState('initialValue');
-  const [argument2, setArgument2] = useState('initialValue');
+const MyModal = ({ showModal, closeModal, onSelectDates }) => {
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
 
-  // Function to call your API and retrieve data
-  const callYourApiFunction = async (arg1, arg2) => {
-    try {
-      // Call your API function here with arguments
-      const response = await yourApiFunction(arg1, arg2);
-      setJsonData(response);
-    } catch (error) {
-      console.error('Error calling your API:', error);
+  const handleConfirm = () => {
+    if (startDate && endDate) {
+      onSelectDates(startDate, endDate);
+      closeModal();
+    } else {
+      alert('Please select both start and end dates.');
     }
   };
 
-  // Function to convert JSON to CSV
-  const convertToCSV = () => {
-    if (!jsonData) return;
+  return (
+    <div className={`modal ${showModal ? 'show' : 'hide'}`}>
+      <div className="modal-content">
+        <span className="close" onClick={closeModal}>&times;</span>
+        <h2>Select Dates</h2>
+        <div className="date-picker">
+          <DatePicker
+            selected={startDate}
+            onChange={(date) => setStartDate(date)}
+            selectsStart
+            startDate={startDate}
+            endDate={endDate}
+            placeholderText="Start Date"
+          />
+          <DatePicker
+            selected={endDate}
+            onChange={(date) => setEndDate(date)}
+            selectsEnd
+            startDate={startDate}
+            endDate={endDate}
+            minDate={startDate}
+            placeholderText="End Date"
+          />
+        </div>
+        <button onClick={handleConfirm}>Confirm</button>
+      </div>
+    </div>
+  );
+};
 
-    const csvData = [];
-    const headers = Object.keys(jsonData[0]);
-    csvData.push(headers.join(','));
+const MyComponent = () => {
+  const [showModal, setShowModal] = useState(false);
 
-    jsonData.forEach((item) => {
-      const values = headers.map((header) => item[header]);
-      csvData.push(values.join(','));
-    });
+  const openModal = () => {
+    setShowModal(true);
+  };
 
-    return csvData.join('\n');
+  const closeModal = () => {
+    setShowModal(false);
+  };
+
+  const handleSelectDates = (startDate, endDate) => {
+    // Call your function with selected dates
+    console.log('Selected dates:', startDate, endDate);
+    // Replace this with your actual function call
   };
 
   return (
     <div>
-      <button onClick={() => callYourApiFunction(argument1, argument2)}>Fetch Data</button>
-      {jsonData && (
-        <div>
-          <h2>Data:</h2>
-          <pre>{JSON.stringify(jsonData, null, 2)}</pre>
-          <CSVLink
-            data={convertToCSV()}
-            filename={'data.csv'}
-            className="btn btn-primary"
-            target="_blank"
-          >
-            Download CSV
-          </CSVLink>
-        </div>
-      )}
+      <button onClick={openModal}>Open Modal</button>
+      <MyModal
+        showModal={showModal}
+        closeModal={closeModal}
+        onSelectDates={handleSelectDates}
+      />
     </div>
   );
-}
-
-// Replace this with your actual API function
-const yourApiFunction = async (arg1, arg2) => {
-  // Example of fetching data from an API with arguments
-  const response = await fetch(`YOUR_API_ENDPOINT?arg1=${arg1}&arg2=${arg2}`);
-  if (!response.ok) {
-    throw new Error('Failed to fetch data from the API');
-  }
-  const data = await response.json();
-  return data;
 };
 
-export default App;
+export default MyComponent;
