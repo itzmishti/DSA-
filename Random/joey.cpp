@@ -1,90 +1,69 @@
+// App.js
+
 import React, { useState } from 'react';
-import './Modal.css'; // Import your CSS file for styling
+import { Navbar, NavbarBrand, Nav, NavItem, NavLink, Container, Row, Col } from 'reactstrap';
+import Sidebar from './Sidebar';
 
-const Modal = ({ isOpen, onClose, children }) => {
-  if (!isOpen) return null;
-
-  const handleClose = () => {
-    onClose();
-  };
-
-  return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-        <button className="modal-close" onClick={handleClose}>X</button>
-        {children}
-        <button onClick={handleClose}>Close Modal</button>
-      </div>
-    </div>
-  );
-};
-
-const App = () => {
+function App() {
   const [isOpen, setIsOpen] = useState(false);
 
-  const openModal = () => {
-    setIsOpen(true);
-  };
-
-  const closeModal = () => {
-    setIsOpen(false);
+  const toggleSidebar = () => {
+    setIsOpen(!isOpen);
   };
 
   return (
-    <div className="App">
-      <button onClick={openModal}>Open Modal</button>
-      <Modal isOpen={isOpen} onClose={closeModal}>
-        <h2>This is a Modal</h2>
-        <p>You can put any content here.</p>
-      </Modal>
+    <div>
+      <Navbar color="light" light expand="md">
+        <NavbarBrand href="/">Your Logo</NavbarBrand>
+        <Nav className="mr-auto" navbar>
+          <NavItem>
+            <NavLink href="/components/">Components</NavLink>
+          </NavItem>
+          <NavItem>
+            <NavLink href="https://github.com/reactstrap/reactstrap">GitHub</NavLink>
+          </NavItem>
+        </Nav>
+      </Navbar>
+      <Container fluid>
+        <Row>
+          <Col xs="3">
+            <Sidebar isOpen={isOpen} toggleSidebar={toggleSidebar} />
+          </Col>
+          <Col xs="9">
+            <h1>Main Content</h1>
+          </Col>
+        </Row>
+      </Container>
     </div>
   );
-};
+}
 
 export default App;
 
 
 
 
+// Sidebar.js
 
+import React from 'react';
+import { Collapse, Nav, NavItem, NavLink } from 'reactstrap';
 
-
-
-
-
-
-
-
-
-
-import React, { useState } from 'react';
-import './Modal.css'; // Import your CSS file for styling
-
-const Modal = ({ isOpen, onClose, children }) => (
-  isOpen ? (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-        <button className="modal-close" onClick={onClose}>X</button>
-        {children}
-        <button onClick={onClose}>Close Modal</button>
-      </div>
-    </div>
-  ) : null
-);
-
-const App = () => {
-  const [isOpen, setIsOpen] = useState(false);
-
+const Sidebar = ({ isOpen, toggleSidebar }) => {
   return (
-    <div className="App">
-      <button onClick={() => setIsOpen(true)}>Open Modal</button>
-      <Modal isOpen={isOpen} onClose={() => setIsOpen(false)}>
-        <h2>This is a Modal</h2>
-        <p>You can put any content here.</p>
-      </Modal>
-    </div>
+    <Collapse isOpen={isOpen}>
+      <Nav vertical>
+        <NavItem>
+          <NavLink href="#" onClick={toggleSidebar}>Link 1</NavLink>
+        </NavItem>
+        <NavItem>
+          <NavLink href="#" onClick={toggleSidebar}>Link 2</NavLink>
+        </NavItem>
+        <NavItem>
+          <NavLink href="#" onClick={toggleSidebar}>Link 3</NavLink>
+        </NavItem>
+      </Nav>
+    </Collapse>
   );
 };
 
-export default App;
-
+export default Sidebar;
