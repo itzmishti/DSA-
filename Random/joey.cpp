@@ -1,3 +1,52 @@
+import React, { useState, useEffect } from 'react';
+
+const Dropdown = () => {
+  const [imageOptions, setImageOptions] = useState([]);
+
+  useEffect(() => {
+    const fetchImages = async () => {
+      try {
+        // Fetch HTML file containing SVG image sources
+        const response = await fetch('images.html');
+        const html = await response.text();
+
+        // Parse HTML to extract SVG elements and their titles
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+        const svgs = Array.from(doc.querySelectorAll('svg'));
+
+        // Extract titles of SVG images
+        const options = svgs.map(svg => ({
+          value: svg.getAttribute('title'),
+          label: svg.getAttribute('title')
+        }));
+
+        // Set image options state
+        setImageOptions(options);
+      } catch (error) {
+        console.error('Error fetching or parsing HTML:', error);
+      }
+    };
+
+    // Call fetchImages function
+    fetchImages();
+  }, []);
+
+  return (
+    <div>
+      <select id="imageDropdown">
+        <option value="">Select Image</option>
+        {imageOptions.map(option => (
+          <option key={option.value} value={option.value}>
+            {option.label}
+          </option>
+        ))}
+      </select>
+    </div>
+  );
+};
+
+export default Dropdown;
 // App.js// Function to fetch HTML file, parse it, and populate dropdown with SVG images and titles
 const populateDropdown = async () => {
   try {
