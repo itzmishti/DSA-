@@ -1,3 +1,53 @@
+import React, { useState } from 'react';
+
+const FileUploader = () => {
+  const [file, setFile] = useState(null);
+
+  // Function to handle file upload
+  const handleFileUpload = (event) => {
+    const uploadedFile = event.target.files[0];
+    setFile(uploadedFile);
+  };
+
+  // Function to handle form submission
+  const handleSubmit = () => {
+    if (file) {
+      // Save the file to a specified location
+      saveFileLocally(file);
+    } else {
+      alert("Please upload a file before submitting.");
+    }
+  };
+
+  // Function to save the file locally
+  const saveFileLocally = (file) => {
+    // Your logic to save the file locally goes here
+    // For example, you can use File API to save the file
+    // Here's a basic example using File Reader:
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const content = e.target.result;
+      // Save 'content' to a specified local location
+      console.log("File content:", content);
+      alert("File saved locally!");
+    };
+    reader.readAsText(file);
+  };
+
+  return (
+    <div>
+      <h2>File Uploader</h2>
+      <input type="file" onChange={handleFileUpload} />
+      <button onClick={handleSubmit}>Submit</button>
+    </div>
+  );
+};
+
+export default FileUploader;
+
+
+
+
 import React, { useState, useEffect } from 'react';
 
 const Dropdown = () => {
