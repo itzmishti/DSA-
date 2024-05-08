@@ -1,3 +1,89 @@
+const express = require('express');
+const multer  = require('multer');
+const path = require('path');
+
+const app = express();
+
+// Set up multer for handling file uploads
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'uploads/'); // Specify the directory where files will be stored
+  },
+  filename: function (req, file, cb) {
+    cb(null, file.originalname); // Keep the original file name
+  }
+});
+
+const upload = multer({ storage: storage });
+
+// Route to handle file upload
+app.post('/upload', upload.single('file'), (req, res) => {
+  // File has been uploaded successfully
+  res.sendStatus(200);
+});
+
+// Serve uploaded files statically
+app.use(express.static('uploads'));
+
+// Start the server
+const port = 3000;
+app.listen(port, () => {
+  console.log(`Server is running on port ${port}`);
+});
+
+
+
+import React, { useState } from 'react';
+
+const FileUploader = () => {
+  const [file, setFile] = useState(null);
+
+  // Function to handle file upload
+  const handleFileUpload = (event) => {
+    const uploadedFile = event.target.files[0];
+    setFile(uploadedFile);
+  };
+
+  // Function to handle form submission
+  const handleSubmit = async () => {
+    if (file) {
+      // Create a FormData object and append the file to it
+      const formData = new FormData();
+      formData.append('file', file);
+
+      try {
+        // Send the file to your server
+        const response = await fetch('/upload', {
+          method: 'POST',
+          body: formData,
+        });
+        if (response.ok) {
+          alert('File uploaded successfully!');
+        } else {
+          throw new Error('Failed to upload file');
+        }
+      } catch (error) {
+        console.error('Error uploading file:', error);
+        alert('Failed to upload file');
+      }
+    } else {
+      alert("Please upload a file before submitting.");
+    }
+  };
+
+  return (
+    <div>
+      <h2>File Uploader</h2>
+      <input type="file" onChange={handleFileUpload} />
+      <button onClick={handleSubmit}>Submit</button>
+    </div>
+  );
+};
+
+export default FileUploader;
+
+
+
 import React, { useState } from 'react';
 
 const FileUploader = () => {
