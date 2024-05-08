@@ -1,3 +1,105 @@
+
+// server.js
+const express = require('express');
+const multer = require('multer');
+const path = require('path');
+const fs = require('fs');
+
+const app = express();
+const port = 5000;
+
+// Set up multer for handling file uploads
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'uploads/'); // Specify the directory where files will be stored
+  },
+  filename: function (req, file, cb) {
+    cb(null, file.originalname); // Keep the original file name
+  }
+});
+
+const upload = multer({ storage: storage });
+
+// Route to handle file upload
+app.post('/upload', upload.single('file'), (req, res) => {
+  // File has been uploaded successfully
+  res.sendStatus(200);
+});
+
+// Route to handle file download
+app.get('/download/:filename', (req, res) => {
+  const filename = req.params.filename;
+  const filePath = path.join(__dirname, 'uploads', filename);
+
+  fs.access(filePath, fs.constants.F_OK, (err) => {
+    if (err) {
+      // File does not exist
+      return res.status(404).send('File not found');
+    }
+
+    // Stream the file to the client
+    const fileStream = fs.createReadStream(filePath);
+    fileStream.pipe(res);
+  });
+});
+
+// Serve uploaded files statically
+app.use(express.static('uploads'));
+
+// Start the server
+app.listen(port, () => {
+  console.log(`Server is running on port ${port}`);
+});
+
+
+// FileUploader.js
+import React, { useState } from 'react';
+import axios from 'axios';
+
+const FileUploader = () => {
+  const [file, setFile] = useState(null);
+
+  const handleFileUpload = (event) => {
+    const uploadedFile = event.target.files[0];
+    setFile(uploadedFile);
+  };
+
+  const handleSubmit = async () => {
+    if (file) {
+      try {
+        const formData = new FormData();
+        formData.append('file', file);
+
+        await axios.post('http://localhost:5000/upload', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        });
+
+        alert('File uploaded successfully!');
+      } catch (error) {
+        console.error('Error uploading file:', error);
+        alert('Failed to upload file');
+      }
+    } else {
+      alert("Please upload a file before submitting.");
+    }
+  };
+
+  return (
+    <div>
+      <h2>File Uploader</h2>
+      <input type="file" onChange={handleFileUpload} />
+      <button onClick={handleSubmit}>Submit</button>
+    </div>
+  );
+};
+
+export default FileUploader;
+
+
+
+
 const express = require('express');
 const multer  = require('multer');
 const path = require('path');
