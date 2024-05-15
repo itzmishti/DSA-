@@ -1,3 +1,71 @@
+import React, { useState, useEffect } from 'react';
+
+function SvgDropdown() {
+  const [symbols, setSymbols] = useState([]);
+  const [selectedSymbol, setSelectedSymbol] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
+
+  useEffect(() => {
+    const fetchSvgSymbols = async () => {
+      try {
+        const response = await fetch('path/to/your/svg/file.html');
+        const html = await response.text();
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+        const svg = doc.querySelector('svg');
+
+        if (svg) {
+          const svgSymbols = Array.from(svg.querySelectorAll('symbol'));
+          const symbolData = svgSymbols.map((symbol) => ({
+            id: symbol.getAttribute('id'),
+          }));
+          setSymbols(symbolData);
+        }
+      } catch (error) {
+        console.error('Error fetching SVG symbols:', error);
+      }
+    };
+
+    fetchSvgSymbols();
+  }, []);
+
+  const handleSymbolSelect = (symbol) => {
+    setSelectedSymbol(symbol);
+  };
+
+  const filteredSymbols = symbols.filter((symbol) =>
+    symbol.id.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  return (
+    <div>
+      <input
+        type="text"
+        placeholder="Search symbols"
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+      />
+      <select onChange={(e) => handleSymbolSelect(e.target.value)}>
+        <option value="">Select a symbol</option>
+        {filteredSymbols.map((symbol) => (
+          <option key={symbol.id} value={symbol.id}>
+            {symbol.id}
+          </option>
+        ))}
+      </select>
+      <div>
+        {selectedSymbol && (
+          <svg>
+            <use xlinkHref={`#${selectedSymbol.id}`} />
+          </svg>
+        )}
+      </div>
+    </div>
+  );
+}
+
+export default SvgDropdown;
+
 import React, { useState } from 'react';
 
 function SvgDropdown({ symbols }) {
