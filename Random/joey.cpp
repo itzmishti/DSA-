@@ -1,3 +1,45 @@
+import React, { useState } from 'react';
+
+function SvgDropdown({ symbols }) {
+  const [selectedSymbol, setSelectedSymbol] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
+
+  const handleSymbolSelect = (symbol) => {
+    setSelectedSymbol(symbol);
+  };
+
+  const filteredSymbols = symbols.filter((symbol) =>
+    symbol.id.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  return (
+    <div>
+      <input
+        type="text"
+        placeholder="Search symbols"
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+      />
+      <select onChange={(e) => handleSymbolSelect(e.target.value)}>
+        <option value="">Select a symbol</option>
+        {filteredSymbols.map((symbol) => (
+          <option key={symbol.id} value={symbol.id}>
+            {symbol.id}
+          </option>
+        ))}
+      </select>
+      <div>
+        {selectedSymbol && (
+          <svg>
+            <use xlinkHref={`#${selectedSymbol.id}`} />
+          </svg>
+        )}
+      </div>
+    </div>
+  );
+}
+
+export default SvgDropdown;
 
 // server.js
 const express = require('express');
