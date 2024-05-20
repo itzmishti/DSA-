@@ -1,3 +1,80 @@
+
+
+// src/components/SymbolDropdown.js
+import React, { useState, useEffect } from 'react';
+
+const SymbolDropdown = () => {
+  const [searchTerm, setSearchTerm] = useState('');
+  const [symbols, setSymbols] = useState([]);
+  const [filteredSymbols, setFilteredSymbols] = useState([]);
+
+  useEffect(() => {
+    const fetchSymbols = async () => {
+      const response = await fetch('/symbols.svg');
+      const text = await response.text();
+      const parser = new DOMParser();
+      const svgDoc = parser.parseFromString(text, 'image/svg+xml');
+      const symbolElements = svgDoc.querySelectorAll('symbol');
+      const symbolIds = Array.from(symbolElements).map(symbol => symbol.id);
+      setSymbols(symbolIds);
+      setFilteredSymbols(symbolIds);
+    };
+
+    fetchSymbols();
+  }, []);
+
+  useEffect(() => {
+    setFilteredSymbols(
+      symbols.filter(symbol =>
+        symbol.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+    );
+  }, [searchTerm, symbols]);
+
+  return (
+    <div>
+      <input
+        type="text"
+        placeholder="Search symbols..."
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+      />
+      <ul>
+        {filteredSymbols.map((symbol) => (
+          <li key={symbol}>
+            <svg>
+              <use xlinkHref={`#${symbol}`} />
+            </svg>
+            {symbol}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+};
+
+export default SymbolDropdown;
+
+
+
+// src/App.js
+import React from 'react';
+import SymbolDropdown from './components/SymbolDropdown';
+
+const App = () => {
+  return (
+    <div className="App">
+      <h1>Searchable SVG Symbol Dropdown</h1>
+      <SymbolDropdown />
+    </div>
+  );
+};
+
+export default App;
+
+
+
+
 import React, { useState, useEffect } from 'react';
 
 function SvgDropdown() {
