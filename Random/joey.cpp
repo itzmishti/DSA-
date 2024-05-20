@@ -1,4 +1,96 @@
 /* src/components/SymbolDropdown.css */
+.custom-option {
+  display: flex;
+  align-items: center;
+}
+
+.custom-option .option-icon {
+  width: 24px;
+  height: 24px;
+  margin-right: 10px;
+}
+
+.symbol-preview {
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.symbol-preview svg {
+  width: 32px;
+  height: 32px;
+  margin-right: 10px;
+}
+
+
+
+// src/components/SymbolDropdown.js
+import React, { useState, useEffect } from 'react';
+import Select from 'react-select';
+import './SymbolDropdown.css';  // Import CSS for styling the SVG display if needed
+
+const SymbolDropdown = () => {
+  const [symbols, setSymbols] = useState([]);
+  const [options, setOptions] = useState([]);
+  const [selectedSymbol, setSelectedSymbol] = useState(null);
+
+  useEffect(() => {
+    const fetchSymbols = async () => {
+      const response = await fetch('/symbols.html');
+      const text = await response.text();
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(text, 'text/html');
+      const symbolElements = doc.querySelectorAll('symbol');
+      const symbolIds = Array.from(symbolElements).map(symbol => symbol.id);
+      setSymbols(symbolIds);
+      setOptions(symbolIds.map(id => ({ value: id, label: id })));
+    };
+
+    fetchSymbols();
+  }, []);
+
+  const handleChange = (selectedOption) => {
+    setSelectedSymbol(selectedOption ? selectedOption.value : null);
+  };
+
+  // Custom Option component
+  const CustomOption = ({ innerRef, innerProps, data }) => (
+    <div ref={innerRef} {...innerProps} className="custom-option">
+      <svg className="option-icon">
+        <use xlinkHref={`#${data.value}`} />
+      </svg>
+      {data.label}
+    </div>
+  );
+
+  return (
+    <div>
+      <Select
+        options={options}
+        onChange={handleChange}
+        placeholder="Search and select a symbol..."
+        isClearable
+        components={{ Option: CustomOption }}
+      />
+      {selectedSymbol && (
+        <div className="symbol-preview">
+          <svg>
+            <use xlinkHref={`#${selectedSymbol}`} />
+          </svg>
+          <span>{selectedSymbol}</span>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default SymbolDropdown;
+
+
+
+
+
+/* src/components/SymbolDropdown.css */
 .symbol-preview {
   display: flex;
   align-items: center;
