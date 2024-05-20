@@ -1,3 +1,17 @@
+/* src/components/SymbolDropdown.css */
+.symbol-preview {
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.symbol-preview svg {
+  width: 32px;
+  height: 32px;
+  margin-right: 10px;
+}
+
+
 // src/components/SymbolDropdown.js
 import React, { useState, useEffect } from 'react';
 import Select from 'react-select';
