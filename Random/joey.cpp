@@ -1,4 +1,68 @@
 
+// src/components/SymbolDropdown.js
+import React, { useState, useEffect } from 'react';
+
+const SymbolDropdown = () => {
+  const [searchTerm, setSearchTerm] = useState('');
+  const [symbols, setSymbols] = useState([]);
+  const [filteredSymbols, setFilteredSymbols] = useState([]);
+  const [selectedSymbol, setSelectedSymbol] = useState('');
+
+  useEffect(() => {
+    const fetchSymbols = async () => {
+      const response = await fetch('/symbols.html');
+      const text = await response.text();
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(text, 'text/html');
+      const symbolElements = doc.querySelectorAll('symbol');
+      const symbolIds = Array.from(symbolElements).map(symbol => symbol.id);
+      setSymbols(symbolIds);
+      setFilteredSymbols(symbolIds);
+    };
+
+    fetchSymbols();
+  }, []);
+
+  useEffect(() => {
+    setFilteredSymbols(
+      symbols.filter(symbol =>
+        symbol.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+    );
+  }, [searchTerm, symbols]);
+
+  const handleSelectChange = (e) => {
+    setSelectedSymbol(e.target.value);
+  };
+
+  return (
+    <div>
+      <input
+        type="text"
+        placeholder="Search symbols..."
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+      />
+      <select value={selectedSymbol} onChange={handleSelectChange}>
+        <option value="">Select a symbol</option>
+        {filteredSymbols.map((symbol) => (
+          <option key={symbol} value={symbol}>
+            {symbol}
+          </option>
+        ))}
+      </select>
+      {selectedSymbol && (
+        <div>
+          <svg>
+            <use xlinkHref={`#${selectedSymbol}`} />
+          </svg>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default SymbolDropdown;
 
 // src/components/SymbolDropdown.js
 import React, { useState, useEffect } from 'react';
