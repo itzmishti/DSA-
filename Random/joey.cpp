@@ -1,3 +1,21 @@
+  const customStyles = {
+    option: (provided, state) => ({
+      ...provided,
+      display: 'flex',
+      alignItems: 'center',
+      backgroundColor: state.isFocused ? 'white' : 'white', // Prevent background change on hover
+      color: 'black', // Ensure text color remains consistent
+      padding: 10, // Optional: Adjust padding for better spacing
+      cursor: 'default', // Set cursor to default
+    }),
+    singleValue: (provided) => ({
+      ...provided,
+      display: 'flex',
+      alignItems: 'center',
+    }),
+  };
+
+
 /* src/components/SymbolDropdown.css */
 .custom-option {
   display: flex;
