@@ -1,3 +1,53 @@
+// src/components/SymbolDropdown.js
+import React, { useState, useEffect } from 'react';
+import Select from 'react-select';
+import './SymbolDropdown.css';  // Import CSS for styling the SVG display if needed
+
+const SymbolDropdown = () => {
+  const [symbols, setSymbols] = useState([]);
+  const [options, setOptions] = useState([]);
+  const [selectedSymbol, setSelectedSymbol] = useState(null);
+
+  useEffect(() => {
+    const fetchSymbols = async () => {
+      const response = await fetch('/symbols.html');
+      const text = await response.text();
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(text, 'text/html');
+      const symbolElements = doc.querySelectorAll('symbol');
+      const symbolIds = Array.from(symbolElements).map(symbol => symbol.id);
+      setSymbols(symbolIds);
+      setOptions(symbolIds.map(id => ({ value: id, label: id })));
+    };
+
+    fetchSymbols();
+  }, []);
+
+  const handleChange = (selectedOption) => {
+    setSelectedSymbol(selectedOption ? selectedOption.value : null);
+  };
+
+  return (
+    <div>
+      <Select
+        options={options}
+        onChange={handleChange}
+        placeholder="Search and select a symbol..."
+        isClearable
+      />
+      {selectedSymbol && (
+        <div className="symbol-preview">
+          <svg>
+            <use xlinkHref={`#${selectedSymbol}`} />
+          </svg>
+          <span>{selectedSymbol}</span>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default SymbolDropdown;
 
 // src/components/SymbolDropdown.js
 import React, { useState, useEffect } from 'react';
