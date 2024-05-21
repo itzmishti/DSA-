@@ -1,4 +1,27 @@
-  const customStyles = {
+// SymbolDropdownRenderer.js
+import React, { useEffect, useState } from 'react';
+import SymbolDropdown from './SymbolDropdown'; // Adjust the import path as needed
+
+const SymbolDropdownRenderer = (props) => {
+  const [value, setValue] = useState(props.value);
+
+  // Updates the state with the selected symbol
+  const handleSymbolChange = (symbol) => {
+    setValue(symbol);
+    props.node.setDataValue(props.colDef.field, symbol); // Update the grid data
+  };
+
+  return (
+    <SymbolDropdown onSymbolChange={handleSymbolChange} />
+  );
+};
+
+export default SymbolDropdownRenderer;
+
+
+
+
+const customStyles = {
     option: (provided, state) => ({
       ...provided,
       display: 'flex',
