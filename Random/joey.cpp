@@ -1,3 +1,105 @@
+// GridComponent.js
+import React, { useState } from 'react';
+import { AgGridReact } from 'ag-grid-react';
+import 'ag-grid-community/styles/ag-grid.css';
+import 'ag-grid-community/styles/ag-theme-alpine.css';
+import SymbolDropdownRenderer from './SymbolDropdownRenderer'; // Adjust the import path as needed
+
+const GridComponent = () => {
+  const [rowData] = useState([
+    { symbol: 'symbol1', value: '10' },
+    { symbol: 'symbol2', value: '20' },
+  ]);
+
+  const symbols = ['symbol1', 'symbol2', 'symbol3']; // Your list of symbols
+
+  const [columnDefs] = useState([
+    {
+      headerName: 'Symbol',
+      field: 'symbol',
+      cellRendererFramework: (params) => <SymbolDropdownRenderer {...params} symbols={symbols} />,
+    },
+    { headerName: 'Value', field: 'value' },
+  ]);
+
+  return (
+    <div className="ag-theme-alpine" style={{ height: 400, width: 600 }}>
+      <AgGridReact
+        rowData={rowData}
+        columnDefs={columnDefs}
+      />
+    </div>
+  );
+};
+
+export default GridComponent;
+
+
+
+// SymbolDropdown.js
+import React, { useState, useEffect } from 'react';
+import Select from 'react-select';
+import './SymbolDropdown.css';
+
+const SymbolDropdown = ({ symbols, onSymbolChange, initialValue }) => {
+  const [selectedOption, setSelectedOption] = useState(null);
+
+  useEffect(() => {
+    if (initialValue) {
+      setSelectedOption({ value: initialValue, label: initialValue });
+    }
+  }, [initialValue]);
+
+  const handleChange = (selectedOption) => {
+    setSelectedOption(selectedOption);
+    onSymbolChange(selectedOption ? selectedOption.value : null);
+  };
+
+  const options = symbols.map(id => ({ value: id, label: id }));
+
+  return (
+    <Select
+      options={options}
+      value={selectedOption}
+      onChange={handleChange}
+      placeholder="Search and select a symbol..."
+      isClearable
+    />
+  );
+};
+
+export default SymbolDropdown;
+
+
+// SymbolDropdownRenderer.js
+import React, { useState, useEffect } from 'react';
+import SymbolDropdown from './SymbolDropdown'; // Adjust the import path as needed
+
+const SymbolDropdownRenderer = (props) => {
+  const [value, setValue] = useState(props.value);
+
+  useEffect(() => {
+    setValue(props.value);
+  }, [props.value]);
+
+  const handleSymbolChange = (symbol) => {
+    setValue(symbol);
+    props.node.setDataValue(props.colDef.field, symbol); // Update the grid data
+    props.api.stopEditing(); // Stop editing when a symbol is selected
+  };
+
+  return (
+    <SymbolDropdown
+      symbols={props.symbols}
+      onSymbolChange={handleSymbolChange}
+      initialValue={value}
+    />
+  );
+};
+
+export default SymbolDropdownRenderer;
+
+
 // SymbolDropdownRenderer.js
 import React, { useEffect, useState } from 'react';
 import SymbolDropdown from './SymbolDropdown'; // Adjust the import path as needed
