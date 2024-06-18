@@ -1,3 +1,91 @@
+// Admin.jsx
+import React, { useContext } from 'react';
+import { AdminContext } from './AdminContext';
+
+const Admin = () => {
+  const {
+    superUser,
+    textAnalysisAdmin,
+    countryAdmin,
+    adminCountryList
+  } = useContext(AdminContext);
+
+  return (
+    <div>
+      <p>Super User: {superUser ? 'Yes' : 'No'}</p>
+      <p>Text Analysis Admin: {textAnalysisAdmin ? 'Yes' : 'No'}</p>
+      <p>Country Admin: {countryAdmin ? 'Yes' : 'No'}</p>
+      <p>Admin Country List: {adminCountryList.join(', ')}</p>
+    </div>
+  );
+};
+
+export default Admin;
+
+// App.jsx
+import React from 'react';
+import { AdminProvider } from './AdminContext';
+import Admin from './Admin';
+
+const App = () => {
+  return (
+    <AdminProvider>
+      <Admin />
+      {/* Other components */}
+    </AdminProvider>
+  );
+};
+
+export default App;
+
+
+// AdminContext.js
+import React, { createContext, useState, useEffect } from 'react';
+
+export const AdminContext = createContext();
+
+export const AdminProvider = ({ children }) => {
+  const [superUser, setSuperUser] = useState(false);
+  const [textAnalysisAdmin, setTextAnalysisAdmin] = useState(false);
+  const [countryAdmin, setCountryAdmin] = useState(false);
+  const [adminCountryList, setAdminCountryList] = useState([]);
+
+  useEffect(() => {
+    const userRoles = getUserRoles(); // Assume this function gets user roles
+    setSuperUser(userRoles.includes(PayAdminRoles.superUserRoleUat));
+    setTextAnalysisAdmin(userRoles.includes(PayAdminRoles.textAnalysisAdminRoleUat));
+
+    const countryList = [];
+    let countryAdminRole = false;
+
+    userRoles.forEach((role) => {
+      if (role.includes(PayAdminRoles.countrySpecificAdminUat)) {
+        countryAdminRole = true;
+        countryList.push(role.split('Admin')[0]);
+      }
+    });
+
+    setCountryAdmin(countryAdminRole);
+    setAdminCountryList(countryList);
+  }, []);
+
+  return (
+    <AdminContext.Provider
+      value={{
+        superUser,
+        textAnalysisAdmin,
+        countryAdmin,
+        adminCountryList
+      }}
+    >
+      {children}
+    </AdminContext.Provider>
+  );
+};
+
+
+
+
 ### Detailed Development of the Admin Dashboard and Data Visualization Dashboard
 
 #### 1. **Administrative Interface Development**
