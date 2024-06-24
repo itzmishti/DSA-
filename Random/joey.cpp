@@ -106,14 +106,25 @@ export default function UpdateCity() {
     }
 
     if (!valid) {
-      params.api.startEditingCell({ rowIndex: params.node.rowIndex, colKey: 'displayName' });
-    } else {
-      params.api.refreshCells({
-        columns: ['action'],
-        rowNodes: [params.node],
-        force: true
+      toast.error(`Oops! Resolve the displayed errors: ${displayNameError} ${urlParamNameError}`, {
+        closeOnClick: true,
+        autoClose: 7000,
       });
+      params.api.startEditingCell({
+        rowIndex: params.node.rowIndex,
+        colKey: params.columnApi.getAllDisplayedColumns()[0].colId
+      });
+    } else {
+      saveCity(currentRow.cityId, currentRow.displayName, currentRow.urlParamName, selectedCountry.countryID, currentRow.active)
+        .then(() => {
+          toast.success(`${currentRow.displayName} has been updated`);
+        })
+        .catch(error => {
+          toast.error(`Error updating ${currentRow.displayName}: ${error.message}`);
+        });
+      setUpdatedRecord(false);
     }
+    refreshGrid();
   };
 
   const handleDisplayName = async (name) => {
