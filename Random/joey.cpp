@@ -1,3 +1,143 @@
+import React, { useState } from 'react';
+import styled from 'styled-components';
+import ProgressBar from './ProgressBar';
+
+const App = () => {
+  const [step, setStep] = useState(1);
+  const [fileType, setFileType] = useState('');
+  const [file, setFile] = useState(null);
+
+  const handleNext = () => {
+    setStep(prev => prev + 1);
+  };
+
+  const handlePrevious = () => {
+    setStep(prev => prev - 1);
+  };
+
+  const handleFileTypeChange = (event) => {
+    setFileType(event.target.value);
+  };
+
+  const handleFileChange = (event) => {
+    setFile(event.target.files[0]);
+  };
+
+  const handleUpload = () => {
+    // Logic to upload file
+    handleNext();
+  };
+
+  const triggerAnalysis = () => {
+    // Logic to trigger analysis
+    handleNext();
+  };
+
+  return (
+    <Container>
+      <ProgressBar step={step} />
+      {step === 1 && (
+        <Step>
+          <h2>Select File Type</h2>
+          <select onChange={handleFileTypeChange} value={fileType}>
+            <option value="" disabled>Select file type</option>
+            <option value="image">Image</option>
+            <option value="document">Document</option>
+            <option value="video">Video</option>
+          </select>
+          <Button onClick={handleNext} disabled={!fileType}>Next</Button>
+        </Step>
+      )}
+      {step === 2 && (
+        <Step>
+          <h2>Upload File</h2>
+          <input type="file" onChange={handleFileChange} />
+          <Button onClick={handlePrevious}>Previous</Button>
+          <Button onClick={handleUpload} disabled={!file}>Upload</Button>
+        </Step>
+      )}
+      {step === 3 && (
+        <Step>
+          <h2>Trigger Analysis</h2>
+          <Button onClick={handlePrevious}>Previous</Button>
+          <Button onClick={triggerAnalysis}>Analyze</Button>
+        </Step>
+      )}
+      {step === 4 && (
+        <Step>
+          <h2>Analysis Complete</h2>
+        </Step>
+      )}
+    </Container>
+  );
+};
+
+export default App;
+
+const Container = styled.div`
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+  text-align: center;
+`;
+
+const Step = styled.div`
+  margin-top: 20px;
+`;
+
+const Button = styled.button`
+  margin: 10px;
+  padding: 10px 20px;
+  background-color: #007BFF;
+  color: white;
+  border: none;
+  cursor: pointer;
+
+  &:disabled {
+    background-color: #CCC;
+    cursor: not-allowed;
+  }
+`;
+
+
+
+
+import React from 'react';
+import styled from 'styled-components';
+
+const ProgressBar = ({ step }) => {
+  return (
+    <ProgressContainer>
+      <ProgressStep active={step >= 1}>Select File Type</ProgressStep>
+      <ProgressStep active={step >= 2}>Upload File</ProgressStep>
+      <ProgressStep active={step >= 3}>Trigger Analysis</ProgressStep>
+    </ProgressContainer>
+  );
+};
+
+export default ProgressBar;
+
+const ProgressContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+`;
+
+const ProgressStep = styled.div`
+  flex: 1;
+  text-align: center;
+  padding: 10px;
+  background-color: $we{props => (props.active ? '#007BFF' : '#CCC')};
+  color: white;
+  border: 1px solid #007BFF;
+
+  &:not(:last-child) {
+    margin-right: 10px;
+  }
+`;
+
+
+
 import React, { useState, useRef, useContext, useCallback } from 'react';
 import { useHistory } from 'react-router-dom';
 import { AdminCountryListContext } from './context';
