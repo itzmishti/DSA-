@@ -1,3 +1,84 @@
+import React, { useState, useEffect } from 'react';
+
+const FileChecker = () => {
+  const [file1Available, setFile1Available] = useState(null);
+  const [file2Available, setFile2Available] = useState(null);
+  const [timer, setTimer] = useState(300); // 5 minutes in seconds
+  const [retryAllowed, setRetryAllowed] = useState(false);
+
+  useEffect(() => {
+    const checkFiles = async () => {
+      try {
+        // Simulating API calls
+        const response1 = await fetch('/api/checkFile1');
+        const response2 = await fetch('/api/checkFile2');
+        setFile1Available(response1.ok);
+        setFile2Available(response2.ok);
+        if (!response1.ok || !response2.ok) {
+          setRetryAllowed(false);
+          setTimer(300);
+        }
+      } catch (error) {
+        console.error('Error checking files:', error);
+      }
+    };
+
+    checkFiles();
+  }, []); // Run on component mount
+
+  useEffect(() => {
+    let timerInterval;
+    if (!retryAllowed && (file1Available === false || file2Available === false)) {
+      timerInterval = setInterval(() => {
+        setTimer((prev) => {
+          if (prev > 0) return prev - 1;
+          clearInterval(timerInterval);
+          setRetryAllowed(true);
+          return 0;
+        });
+      }, 1000);
+    }
+    return () => clearInterval(timerInterval);
+  }, [file1Available, file2Available, retryAllowed]);
+
+  const retryCheck = () => {
+    setRetryAllowed(false);
+    setFile1Available(null);
+    setFile2Available(null);
+    setTimer(300);
+    // Trigger API checks again
+    checkFiles();
+  };
+
+  return (
+    <div>
+      <h1>File Checker</h1>
+      {file1Available !== null && (
+        <div>
+          {file1Available ? (
+            <a href="/api/downloadFile1">Download File 1</a>
+          ) : (
+            <p>File 1 not available. Retrying in {timer} seconds...</p>
+          )}
+        </div>
+      )}
+      {file2Available !== null && (
+        <div>
+          {file2Available ? (
+            <a href="/api/downloadFile2">Download File 2</a>
+          ) : (
+            <p>File 2 not available. Retrying in {timer} seconds...</p>
+          )}
+        </div>
+      )}
+      {retryAllowed && <button onClick={retryCheck}>Retry Now</button>}
+    </div>
+  );
+};
+
+export default FileChecker;
+
+
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import ProgressBar from './ProgressBar';
