@@ -1,3 +1,140 @@
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { useNotification } from './NotificationContext';
+
+const FileChecker = () => {
+  const [fileAvailable, setFileAvailable] = useState(false);
+  const navigate = useNavigate();
+  const { notify } = useNotification();
+
+  useEffect(() => {
+    const checkFileAvailability = async () => {
+      try {
+        const response = await axios.get('/api/check-file');
+        if (response.data.available) {
+          setFileAvailable(true);
+        }
+      } catch (error) {
+        console.error("Error checking file availability", error);
+      }
+    };
+
+    const interval = setInterval(checkFileAvailability, 60000); // Check every minute
+
+    // Cleanup interval on component unmount
+    return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    if (fileAvailable) {
+      // Notify the user when the file becomes available
+      notify("Your file is now available for download!");
+    }
+  }, [fileAvailable, notify]);
+
+  return (
+    <div>
+      {fileAvailable ? (
+        <a href="/api/download-file" download>Download File</a>
+      ) : (
+        <p>File is not yet available. Checking every minute...</p>
+      )}
+      <button onClick={() => navigate('/some-other-page')}>Go to another page</button>
+    </div>
+  );
+};
+
+export default FileChecker;
+
+
+
+import React from 'react';
+import ReactDOM from 'react-dom';
+import App from './App';
+import { NotificationProvider } from './NotificationContext';
+
+ReactDOM.render(
+  <NotificationProvider>
+    <App />
+  </NotificationProvider>,
+  document.getElementById('root')
+);
+
+
+import React, { createContext, useContext, useState } from 'react';
+
+const NotificationContext = createContext();
+
+export const useNotification = () => {
+  return useContext(NotificationContext);
+};
+
+export const NotificationProvider = ({ children }) => {
+  const [notification, setNotification] = useState(null);
+
+  const notify = (message) => {
+    setNotification(message);
+  };
+
+  return (
+    <NotificationContext.Provider value={{ notification, notify }}>
+      {children}
+      {notification && <div className="notification">{notification}</div>}
+    </NotificationContext.Provider>
+  );
+};
+
+
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+
+const FileChecker = () => {
+  const [fileAvailable, setFileAvailable] = useState(false);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const checkFileAvailability = async () => {
+      try {
+        const response = await axios.get('/api/check-file');
+        if (response.data.available) {
+          setFileAvailable(true);
+        }
+      } catch (error) {
+        console.error("Error checking file availability", error);
+      }
+    };
+
+    const interval = setInterval(checkFileAvailability, 60000); // Check every minute
+
+    // Cleanup interval on component unmount
+    return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    if (fileAvailable) {
+      // Notify the user when the file becomes available
+      alert("Your file is now available for download!");
+    }
+  }, [fileAvailable]);
+
+  return (
+    <div>
+      {fileAvailable ? (
+        <a href="/api/download-file" download>Download File</a>
+      ) : (
+        <p>File is not yet available. Checking every minute...</p>
+      )}
+      <button onClick={() => navigate('/some-other-page')}>Go to another page</button>
+    </div>
+  );
+};
+
+export default FileChecker;
+
+
+
 import React, { useState, useEffect } from 'react';
 
 const FileChecker = () => {
