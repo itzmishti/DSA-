@@ -1,3 +1,97 @@
+import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Switch } from 'react-router-dom';
+import ProtectedRoute from './ProtectedRoute';
+import UpdateCity from './UpdateCity';
+import NewCountryForm from './NewCountryForm';
+import EditCountry from './EditCountry';
+import AddCity from './AddCity';
+
+const App = () => {
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSuperUser, setIsSuperUser] = useState(false);
+  const [isCountryAdmin, setIsCountryAdmin] = useState(false);
+
+  useEffect(() => {
+    // Simulate an async operation to fetch user roles
+    setTimeout(() => {
+      // Set user roles here
+      // setIsSuperUser(true/false);
+      // setIsCountryAdmin(true/false);
+
+      setIsLoading(false); // After fetching roles
+    }, 1000);
+  }, []);
+
+  return (
+    <Router>
+      <Switch>
+        {/* Routes for super user */}
+        <ProtectedRoute
+          path="/admin/editCountry"
+          component={EditCountry}
+          isLoading={isLoading}
+          isAuthorized={isSuperUser}
+        />
+        <ProtectedRoute
+          path="/admin/addCountry"
+          component={NewCountryForm}
+          isLoading={isLoading}
+          isAuthorized={isSuperUser}
+        />
+
+        {/* Routes for country admin or super user */}
+        <ProtectedRoute
+          path="/admin/editCity"
+          component={UpdateCity}
+          isLoading={isLoading}
+          isAuthorized={isSuperUser || isCountryAdmin}
+        />
+
+        {/* Route for adding city accessible by both super user and country admin */}
+        <ProtectedRoute
+          path="/admin/addCity"
+          component={AddCity}
+          isLoading={isLoading}
+          isAuthorized={isSuperUser || isCountryAdmin}
+        />
+
+        {/* Fallback for unauthorized access */}
+        <ProtectedRoute
+          path="*"
+          component={AdminAuthError}
+          isLoading={isLoading}
+          isAuthorized={false}
+        />
+      </Switch>
+    </Router>
+  );
+};
+
+export default App;
+import React from 'react';
+import { Route, Redirect } from 'react-router-dom';
+import Loader from './Loader';
+import AdminAuthError from './AdminAuthError';
+
+const ProtectedRoute = ({ component: Component, isLoading, isAuthorized, ...rest }) => {
+  return (
+    <Route
+      {...rest}
+      render={props =>
+        isLoading ? (
+          <Loader />
+        ) : isAuthorized ? (
+          <Component {...props} />
+        ) : (
+          <AdminAuthError />
+        )
+      }
+    />
+  );
+};
+
+export default ProtectedRoute;
+
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
