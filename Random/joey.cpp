@@ -1,3 +1,241 @@
+mport { NgModule } from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser';
+import { FormsModule } from '@angular/forms';
+import { AppComponent } from './app.component';
+import { AdminEmailTemplateComponent } from './admin-email-template/admin-email-template.component';
+
+@NgModule({
+  declarations: [
+    AppComponent,
+    AdminEmailTemplateComponent
+  ],
+  imports: [
+    BrowserModule,
+    FormsModule
+  ],
+  providers: [],
+  bootstrap: [AppComponent]
+})
+export class AppModule { }
+
+
+
+
+
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'app-admin-email-template',
+  templateUrl: './admin-email-template.component.html',
+  styleUrls: ['./admin-email-template.component.css']
+})
+export class AdminEmailTemplateComponent {
+  regions: string[] = ['Region 1', 'Region 2', 'Region 3'];
+  countries: string[] = [];
+  selectedRegion: string = '';
+  selectedCountry: string = '';
+  emailTemplates: any = {
+    'Region 1': {
+      'Country 1': '<p>Default template for Region 1, Country 1</p>',
+      'Country 2': '<p>Default template for Region 1, Country 2</p>'
+    },
+    'Region 2': {
+      'Country 1': '<p>Default template for Region 2, Country 1</p>'
+    }
+  };
+  requestTypes: string[] = ['Request Type 1', 'Request Type 2', 'Request Type 3'];
+  selectedRequestType: string = this.requestTypes[0];
+  emailTemplate: string | null = null;
+  newEmailTemplate: string = '';
+  previewHtml: string | null = null;
+
+  onRegionChange() {
+    // Mock country data based on selected region
+    if (this.selectedRegion === 'Region 1') {
+      this.countries = ['Country 1', 'Country 2'];
+    } else if (this.selectedRegion === 'Region 2') {
+      this.countries = ['Country 1'];
+    } else {
+      this.countries = [];
+    }
+    this.selectedCountry = '';
+    this.emailTemplate = null;
+  }
+
+  onCountryChange() {
+    this.loadEmailTemplate();
+  }
+
+  loadEmailTemplate() {
+    if (this.selectedRegion && this.selectedCountry) {
+      const templatesForRegion = this.emailTemplates[this.selectedRegion] || {};
+      this.emailTemplate = templatesForRegion[this.selectedCountry] || null;
+      this.newEmailTemplate = '';
+    }
+  }
+
+  previewTemplate() {
+    this.previewHtml = this.emailTemplate || this.newEmailTemplate;
+  }
+
+  onSubmit() {
+    // Save the email template (mock implementation)
+    if (this.selectedRegion && this.selectedCountry) {
+      if (!this.emailTemplates[this.selectedRegion]) {
+        this.emailTemplates[this.selectedRegion] = {};
+      }
+      this.emailTemplates[this.selectedRegion][this.selectedCountry] = this.emailTemplate || this.newEmailTemplate;
+      alert('Template saved successfully!');
+    }
+  }
+}
+
+
+
+
+<div>
+  <h2>Email Template Management</h2>
+  <form (ngSubmit)="onSubmit()">
+    <div>
+      <label for="region">Select Region:</label>
+      <select id="region" [(ngModel)]="selectedRegion" name="region" (change)="onRegionChange()">
+        <option *ngFor="let region of regions" [value]="region">{{ region }}</option>
+      </select>
+    </div>
+
+    <div>
+      <label for="country">Select Country:</label>
+      <select id="country" [(ngModel)]="selectedCountry" name="country" (change)="onCountryChange()">
+        <option *ngFor="let country of countries" [value]="country">{{ country }}</option>
+      </select>
+    </div>
+
+    <div *ngIf="emailTemplate">
+      <label for="emailTemplate">Email Template:</label>
+      <textarea id="emailTemplate" [(ngModel)]="emailTemplate" name="emailTemplate" rows="10" cols="50"></textarea>
+    </div>
+
+    <div *ngIf="!emailTemplate">
+      <label for="newEmailTemplate">Create New Email Template:</label>
+      <textarea id="newEmailTemplate" [(ngModel)]="newEmailTemplate" name="newEmailTemplate" rows="10" cols="50"></textarea>
+    </div>
+
+    <button type="button" (click)="previewTemplate()">Preview Template</button>
+    <button type="submit">Save Template</button>
+  </form>
+
+  <div *ngIf="previewHtml">
+    <h3>Template Preview</h3>
+    <div [innerHTML]="previewHtml"></div>
+  </div>
+</div>
+
+////////////////////
+
+.email-preview {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  font-family: Arial, sans-serif;
+  line-height: 1.6;
+}
+
+.email-preview h1,
+.email-preview h2,
+.email-preview h3,
+.email-preview h4,
+.email-preview h5,
+.email-preview h6 {
+  margin-top: 0;
+}
+
+.email-preview p {
+  margin-bottom: 1.5em;
+}
+
+.email-preview a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.email-preview a:hover {
+  text-decoration: underline;
+}
+
+
+// email-template-editor.component.ts
+import { Component } from '@angular/core';
+import { EmailTemplateService } from './email-template.service';
+
+@Component({
+  selector: 'app-email-template-editor',
+  template: `
+    <app-region-country-selector (regionCountrySelected)="onRegionCountrySelected($event)"></app-region-country-selector>
+    <select [(ngModel)]="selectedRequestType" (change)="loadTemplate()">
+      <option *ngFor="let type of requestType" [value]="type">{{ type }}</option>
+    </select>
+    <textarea *ngIf="!templateExists" [(ngModel)]="templateContent" placeholder="Create new template"></textarea>
+    <div *ngIf="templateExists" [innerHTML]="templateContent" contenteditable="true"></div>
+    <button (click)="previewTemplate()" data-bs-toggle="modal" data-bs-target="#previewModal">Preview</button>
+
+    <!-- Modal -->
+    <div class="modal fade" id="previewModal" tabindex="-1" aria-labelledby="previewModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="previewModalLabel">Email Template Preview</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="email-preview" [innerHTML]="previewContent"></div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  `,
+  styles: [`
+    .email-preview {
+      width: 100%;
+      padding: 20px;
+      border: 1px solid #ddd;
+      background-color: #f9f9f9;
+    }
+  `]
+})
+export class EmailTemplateEditorComponent {
+  selectedRegion = '';
+  selectedCountry = '';
+  selectedRequestType = '';
+  requestTypes = ['requestType1', 'requestType2', 'requestType3'];
+  templateContent = '';
+  previewContent = '';
+  templateExists = false;
+
+  constructor(private emailTemplateService: EmailTemplateService) {}
+
+  onRegionCountrySelected(event: { region: string, country: string }) {
+    this.selectedRegion = event.region;
+    this.selectedCountry = event.country;
+    this.loadTemplate();
+  }
+
+  loadTemplate() {
+    this.templateContent = this.emailTemplateService.getTemplate(this.selectedRegion, this.selectedCountry, this.selectedRequestType);
+    this.templateExists = !!this.templateContent;
+  }
+
+  previewTemplate() {
+    this.previewContent = this.templateContent;
+  }
+}
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
