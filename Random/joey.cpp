@@ -1,3 +1,69 @@
+import { NgModule } from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser';
+import { FormsModule } from '@angular/forms';
+
+import { AppComponent } from './app.component';
+
+@NgModule({
+  declarations: [
+    AppComponent
+  ],
+  imports: [
+    BrowserModule,
+    FormsModule
+  ],
+  providers: [],
+  bootstrap: [AppComponent]
+})
+export class AppModule { }
+
+
+
+.container {
+  margin: 20px;
+}
+
+.preview-container {
+  border: 1px solid #ddd;
+  padding: 10px;
+  margin-top: 20px;
+  background-color: #f9f9f9;
+}
+
+
+
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'app-root',
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.css']
+})
+export class AppComponent {
+  htmlContent: string = '';
+
+  renderPreview() {
+    // Logic to render the preview is directly handled by Angular binding with [innerHTML]
+    // So, no additional logic is needed here for this simple example.
+  }
+}
+
+
+
+<div class="container">
+  <h1>HTML Preview</h1>
+  <div class="form-group">
+    <label for="htmlInput">Enter HTML content:</label>
+    <textarea id="htmlInput" class="form-control" [(ngModel)]="htmlContent" rows="5"></textarea>
+  </div>
+  <button class="btn btn-primary" (click)="renderPreview()">Render Preview</button>
+  
+  <h2>Preview:</h2>
+  <div [innerHTML]="htmlContent" class="preview-container"></div>
+</div>
+
+
+
 <div class="row">
   <div class="col-md-4">
     <ul class="nav flex-column custom-nav">
