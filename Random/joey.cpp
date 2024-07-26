@@ -1,3 +1,66 @@
+npm install ngx-quill quill --save
+
+
+  import { NgModule } from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser';
+import { FormsModule } from '@angular/forms';
+import { QuillModule } from 'ngx-quill';
+
+import { AppComponent } from './app.component';
+
+@NgModule({
+  declarations: [
+    AppComponent
+  ],
+  imports: [
+    BrowserModule,
+    FormsModule,
+    QuillModule.forRoot()
+  ],
+  providers: [],
+  bootstrap: [AppComponent]
+})
+export class AppModule { }
+
+
+
+
+
+        
+<div class="container">
+  <h1>HTML Preview</h1>
+  <quill-editor [(ngModel)]="htmlContent" [styles]="{height: '200px'}"></quill-editor>
+  
+  <h2>Preview:</h2>
+  <div [innerHTML]="htmlContent" class="preview-container"></div>
+</div>
+
+
+  <div class="container">
+  <h1>HTML Preview</h1>
+  <quill-editor [(ngModel)]="htmlContent" [styles]="{height: '200px'}"></quill-editor>
+  
+  <h2>Preview:</h2>
+  <div [innerHTML]="htmlContent" class="preview-container"></div>
+</div>
+
+
+  .container {
+  margin: 20px;
+}
+
+.preview-container {
+  border: 1px solid #ddd;
+  padding: 10px;
+  margin-top: 20px;
+  background-color: #f9f9f9;
+}
+
+
+
+
+
+
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
