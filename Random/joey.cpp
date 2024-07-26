@@ -1,3 +1,108 @@
+
+<div class="EmailMain">
+  <tux-text-input required="true" label="Subject" placeholder="Input Subject"
+    [(ngModel)]="emailSubject" (ngModelChange)="onFormChange()"></tux-text-input>
+</div>
+
+
+
+  import { Injectable } from '@angular/core';
+import { CanDeactivate } from '@angular/router';
+import { Observable } from 'rxjs';
+
+export interface CanComponentDeactivate {
+  canDeactivate: () => Observable<boolean> | Promise<boolean> | boolean;
+}
+
+@Injectable({
+  providedIn: 'root',
+})
+export class CanDeactivateGuard implements CanDeactivate<CanComponentDeactivate> {
+  canDeactivate(
+    component: CanComponentDeactivate
+  ): Observable<boolean> | Promise<boolean> | boolean {
+    return component.canDeactivate ? component.canDeactivate() : true;
+  }
+}
+
+
+import { Component, OnInit } from '@angular/core';
+import { CanComponentDeactivate } from './can-deactivate-guard.service';
+import { Observable } from 'rxjs';
+import { Router } from '@angular/router';
+
+@Component({
+  selector: 'app-email-templates',
+  templateUrl: './email-templates.component.html',
+  styleUrls: ['./email-templates.component.css']
+})
+export class EmailTemplatesComponent implements OnInit, CanComponentDeactivate {
+  requestStatusList = [];
+  emailSubject = '';
+  isFormDirty = false;
+
+  constructor(private router: Router) {}
+
+  ngOnInit() {
+    this.getAllRequestStatus();
+  }
+
+  getAllRequestStatus() {
+    this.requestStatusList = [
+      { statusId: 1, emailAction: 'Action 1' },
+      { statusId: 2, emailAction: 'Action 2' },
+      { statusId: 3, emailAction: 'Action 3' } // This will be filtered out in the template
+    ];
+  }
+
+  navigateTo(statusId: number) {
+    if (this.isFormDirty) {
+      const confirmNavigation = confirm('You have unsaved changes. Do you really want to leave?');
+      if (confirmNavigation) {
+        this.isFormDirty = false; // Reset the dirty flag
+        this.router.navigate(['/your-path', statusId]);
+      }
+    } else {
+      this.router.navigate(['/your-path', statusId]);
+    }
+  }
+
+  onFormChange() {
+    this.isFormDirty = true;
+  }
+
+  canDeactivate(): Observable<boolean> | Promise<boolean> | boolean {
+    if (this.isFormDirty) {
+      return confirm('You have unsaved changes. Do you really want to leave?');
+    }
+    return true;
+  }
+}
+
+
+import { NgModule } from '@angular/core';
+import { RouterModule, Routes } from '@angular/router';
+import { EmailTemplatesComponent } from './email-templates/email-templates.component';
+import { CanDeactivateGuard } from './can-deactivate-guard.service';
+
+const routes: Routes = [
+  {
+    path: 'email-templates',
+    component: EmailTemplatesComponent,
+    canDeactivate: [CanDeactivateGuard]
+  },
+  // other routes
+];
+
+@NgModule({
+  imports: [RouterModule.forRoot(routes)],
+  exports: [RouterModule]
+})
+export class AppRoutingModule { }
+  
+
+
+
 npm install ngx-quill quill --save
 
 
