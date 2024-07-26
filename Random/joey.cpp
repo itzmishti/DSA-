@@ -1,3 +1,34 @@
+
+<div class="row">
+  <div class="col-md-4">
+    <ul class="nav flex-column">
+      <li class="nav-item" *ngFor="let status of requestStatusList">
+        <a class="nav-link" (click)="navigateTo(status.statusId)">
+          {{ status.emailAction }}
+        </a>
+      </li>
+    </ul>
+  </div>
+  
+  <div class="col-md-8">
+    <!-- Rest of your form and content -->
+    <button (click)="getAllRequestStatus()">Let status of requestStatusList</button>
+    <div class="rightSide">
+      <h3 class="topHeading mt-2">New Request</h3>
+      <div class="line ml-1 mt-3"></div>
+      <div class="EmailMain">
+        <tux-text-input required="true" label="Subject" placeholder="Input Subject"
+          [(ngModel)]="emailSubject"></tux-text-input>
+      </div>
+      <label class="tuxedo-label required" for="text_area_counter">Body</label>
+    </div>
+  </div>
+</div>
+
+
+
+
+
 mport { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
