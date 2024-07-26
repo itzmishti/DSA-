@@ -1,4 +1,88 @@
 
+import { Component, OnInit } from '@angular/core';
+import { CanComponentDeactivate } from './can-deactivate-guard.service';
+import { Observable } from 'rxjs';
+import { Router } from '@angular/router';
+
+@Component({
+  selector: 'app-email-templates',
+  templateUrl: './email-templates.component.html',
+  styleUrls: ['./email-templates.component.css']
+})
+export class EmailTemplatesComponent implements OnInit, CanComponentDeactivate {
+  requestStatusList = [];
+  emailSubject = '';
+  isFormDirty = false;
+
+  constructor(private router: Router) {}
+
+  ngOnInit() {
+    this.getAllRequestStatus();
+  }
+
+  getAllRequestStatus() {
+    this.requestStatusList = [
+      { statusId: 1, emailAction: 'Action 1' },
+      { statusId: 2, emailAction: 'Action 2' },
+      { statusId: 3, emailAction: 'Action 3' } // This will be filtered out in the template
+    ];
+  }
+
+  navigateTo(statusId: number) {
+    if (this.isFormDirty) {
+      const confirmNavigation = confirm('You have unsaved changes. Do you want to save your changes before leaving? Click "Cancel" to stay on the page, "OK" to discard changes and navigate.');
+      if (confirmNavigation) {
+        this.isFormDirty = false; // Reset the dirty flag
+        this.router.navigate(['/your-path', statusId]);
+      }
+    } else {
+      this.router.navigate(['/your-path', statusId]);
+    }
+  }
+
+  onFormChange() {
+    this.isFormDirty = true;
+  }
+
+  canDeactivate(): Observable<boolean> | Promise<boolean> | boolean {
+    if (this.isFormDirty) {
+      return confirm('You have unsaved changes. Do you really want to leave?');
+    }
+    return true;
+  }
+}
+
+
+<div class="row">
+  <div class="col-md-4">
+    <ul class="nav flex-column custom-nav">
+      <li class="nav-item custom-nav-item" *ngFor="let status of requestStatusList">
+        <a *ngIf="status.statusId !== 3" class="nav-link custom-nav-link" (click)="navigateTo(status.statusId)">
+          {{ status.emailAction }}
+        </a>
+      </li>
+    </ul>
+  </div>
+  
+  <div class="col-md-8">
+    <!-- Rest of your form and content -->
+    <button (click)="getAllRequestStatus()">Let status of requestStatusList</button>
+    <div class="rightSide">
+      <h3 class="topHeading mt-2">New Request</h3>
+      <div class="line ml-1 mt-3"></div>
+      <div class="EmailMain">
+        <tux-text-input required="true" label="Subject" placeholder="Input Subject"
+          [(ngModel)]="emailSubject" (ngModelChange)="onFormChange()"></tux-text-input>
+      </div>
+      <label class="tuxedo-label required" for="text_area_counter">Body</label>
+    </div>
+  </div>
+</div>
+
+
+
+
+
 <div class="EmailMain">
   <tux-text-input required="true" label="Subject" placeholder="Input Subject"
     [(ngModel)]="emailSubject" (ngModelChange)="onFormChange()"></tux-text-input>
