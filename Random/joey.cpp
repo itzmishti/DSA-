@@ -1,3 +1,67 @@
+<div class="row">
+  <div class="col-md-4">
+    <ul class="nav flex-column custom-nav">
+      <li class="nav-item custom-nav-item" *ngFor="let status of requestStatusList">
+        <a *ngIf="status.statusId !== 3" class="nav-link custom-nav-link" (click)="navigateTo(status.statusId)">
+          {{ status.emailAction }}
+        </a>
+      </li>
+    </ul>
+  </div>
+  
+  <div class="col-md-8">
+    <!-- Rest of your form and content -->
+    <button (click)="getAllRequestStatus()">Let status of requestStatusList</button>
+    <div class="rightSide">
+      <h3 class="topHeading mt-2">New Request</h3>
+      <div class="line ml-1 mt-3"></div>
+      <div class="EmailMain">
+        <tux-text-input required="true" label="Subject" placeholder="Input Subject"
+          [(ngModel)]="emailSubject"></tux-text-input>
+      </div>
+      <label class="tuxedo-label required" for="text_area_counter">Body</label>
+    </div>
+  </div>
+</div>
+
+
+
+/* Remove margin and padding from ul and li elements */
+.custom-nav {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* Style individual list items */
+.custom-nav-item {
+  margin-bottom: 5px; /* Adjust the space between items */
+}
+
+/* Style links */
+.custom-nav-link {
+  display: block;
+  padding: 8px 16px;
+  text-decoration: none;
+  color: #007bff; /* Bootstrap primary color */
+  background-color: #f8f9fa; /* Bootstrap light color */
+  border-radius: 4px; /* Rounded corners */
+  transition: background-color 0.3s ease;
+}
+
+/* Hover effect for links */
+.custom-nav-link:hover {
+  background-color: #e2e6ea; /* Slightly darker light color */
+  color: #0056b3; /* Darker blue color for hover */
+}
+
+/* Active state for links */
+.custom-nav-link:active {
+  background-color: #dae0e5; /* Even darker light color */
+  color: #00376b; /* Even darker blue color for active */
+}
+
+
 
 <div class="row">
   <div class="col-md-4">
