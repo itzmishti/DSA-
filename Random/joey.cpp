@@ -1,3 +1,119 @@
+<div class="row">
+  <div class="col-md-4">
+    <ul class="nav flex-column custom-nav">
+      <li class="nav-item custom-nav-item" *ngFor="let status of requestStatusList">
+        <a *ngIf="status.statusId !== 3" class="nav-link custom-nav-link" (click)="navigateTo(status.statusId)">
+          {{ status.emailAction }}
+        </a>
+      </li>
+    </ul>
+  </div>
+  
+  <div class="col-md-8">
+    <!-- Rest of your form and content -->
+    <button (click)="getAllRequestStatus()">Let status of requestStatusList</button>
+    <div class="rightSide">
+      <h3 class="topHeading mt-2">New Request</h3>
+      <div class="line ml-1 mt-3"></div>
+      <div class="EmailMain">
+        <tux-text-input required="true" label="Subject" placeholder="Input Subject"
+          [(ngModel)]="emailSubject" (ngModelChange)="onFormChange()"></tux-text-input>
+      </div>
+      <label class="tuxedo-label required" for="text_area_counter">Body</label>
+    </div>
+  </div>
+</div>
+
+import { Component, OnInit } from '@angular/core';
+import { CanComponentDeactivate } from './can-deactivate-guard.service';
+import { Observable } from 'rxjs';
+import { Router } from '@angular/router';
+import Swal from 'sweetalert2';
+
+@Component({
+  selector: 'app-email-templates',
+  templateUrl: './email-templates.component.html',
+  styleUrls: ['./email-templates.component.css']
+})
+export class EmailTemplatesComponent implements OnInit, CanComponentDeactivate {
+  requestStatusList = [];
+  emailSubject = '';
+  isFormDirty = false;
+
+  constructor(private router: Router) {}
+
+  ngOnInit() {
+    this.getAllRequestStatus();
+  }
+
+  getAllRequestStatus() {
+    this.requestStatusList = [
+      { statusId: 1, emailAction: 'Action 1' },
+      { statusId: 2, emailAction: 'Action 2' },
+      { statusId: 3, emailAction: 'Action 3' } // This will be filtered out in the template
+    ];
+  }
+
+  navigateTo(statusId: number) {
+    if (this.isFormDirty) {
+      Swal.fire({
+        title: 'Unsaved changes',
+        text: 'You have unsaved changes. Do you want to save your changes before leaving?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Save',
+        cancelButtonText: 'Discard',
+        reverseButtons: true
+      }).then((result) => {
+        if (result.isConfirmed) {
+          // Save changes and navigate
+          this.saveChanges().then(() => {
+            this.isFormDirty = false; // Reset the dirty flag
+            this.router.navigate(['/your-path', statusId]);
+          });
+        } else if (result.dismiss === Swal.DismissReason.cancel) {
+          // Discard changes and navigate
+          this.isFormDirty = false; // Reset the dirty flag
+          this.router.navigate(['/your-path', statusId]);
+        }
+      });
+    } else {
+      this.router.navigate(['/your-path', statusId]);
+    }
+  }
+
+  onFormChange() {
+    this.isFormDirty = true;
+  }
+
+  saveChanges(): Promise<void> {
+    // Implement your save logic here and return a promise
+    return new Promise((resolve, reject) => {
+      // Simulating save with a timeout
+      setTimeout(() => {
+        console.log('Changes saved');
+        resolve();
+      }, 1000);
+    });
+  }
+
+  canDeactivate(): Observable<boolean> | Promise<boolean> | boolean {
+    if (this.isFormDirty) {
+      return Swal.fire({
+        title: 'Unsaved changes',
+        text: 'You have unsaved changes. Do you really want to leave?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Leave',
+        cancelButtonText: 'Stay'
+      }).then((result) => {
+        return result.isConfirmed;
+      });
+    }
+    return true;
+  }
+}
+
 
 import { Component, OnInit } from '@angular/core';
 import { CanComponentDeactivate } from './can-deactivate-guard.service';
