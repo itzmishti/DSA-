@@ -1,3 +1,41 @@
+import { Component, OnInit } from '@angular/core';
+import * as bootstrap from 'bootstrap';
+
+@Component({
+  selector: 'app-root',
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.css']
+})
+export class AppComponent implements OnInit {
+  private popover: bootstrap.Popover | undefined;
+
+  ngOnInit() {
+    const popoverTrigger = document.getElementById('popover');
+    if (popoverTrigger) {
+      this.popover = new bootstrap.Popover(popoverTrigger);
+    }
+    
+    // Close popover on outside click
+    document.addEventListener('click', this.onDocumentClick.bind(this), true);
+  }
+
+  togglePopover(event: MouseEvent) {
+    event.stopPropagation();  // Prevents immediate popover close after opening
+    if (this.popover) {
+      this.popover.toggle();
+    }
+  }
+
+  onDocumentClick(event: MouseEvent) {
+    const popoverElement = document.querySelector('.popover');
+    if (popoverElement && !popoverElement.contains(event.target as Node) && this.popover) {
+      this.popover.hide();
+    }
+  }
+}
+
+
+
 import { Component, HostListener } from '@angular/core';
 
 @Component({
