@@ -1,3 +1,11 @@
+<div class="container mt-5">
+  <button type="button" class="btn btn-primary" id="popover" data-bs-toggle="popover" title="Popover Title"
+    data-bs-content="This is the popover content!" (click)="togglePopover($event)">
+    View Content
+  </button>
+</div>
+
+
 import { Component, OnInit } from '@angular/core';
 import * as bootstrap from 'bootstrap';
 
