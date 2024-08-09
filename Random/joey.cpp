@@ -1,3 +1,30 @@
+import { Component, HostListener } from '@angular/core';
+
+@Component({
+  selector: 'app-tooltip',
+  templateUrl: './tooltip.component.html',
+  styleUrls: ['./tooltip.component.css']
+})
+export class TooltipComponent {
+  isTooltipVisible = true;
+
+  @HostListener('document:click', ['$event'])
+  handleClick(event: Event) {
+    const target = event.target as HTMLElement;
+    
+    // Check if the click was outside the tooltip
+    if (!target.closest('.tooltip') && this.isTooltipVisible) {
+      this.closeTooltip();
+    }
+  }
+
+  closeTooltip() {
+    this.isTooltipVisible = false;
+  }
+}
+
+
+
 <div class="row">
   <div class="col-md-4">
     <ul class="nav flex-column custom-nav">
