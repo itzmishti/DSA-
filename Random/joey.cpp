@@ -1,3 +1,74 @@
+// Component.ts
+
+export class YourComponent {
+  public selectedVehicleIndex: number | null = null;
+
+  togglePopover(index: number): void {
+    if (this.selectedVehicleIndex === index) {
+      this.selectedVehicleIndex = null; // If the same index is clicked, close the popover
+    } else {
+      this.selectedVehicleIndex = index;
+    }
+  }
+
+  isPopoverVisible(index: number): boolean {
+    return this.selectedVehicleIndex === index;
+  }
+
+  handleOutsideClick(event: Event, index: number): void {
+    if (this.isPopoverVisible(index)) {
+      this.selectedVehicleIndex = null;
+    }
+  }
+}
+
+
+<!-- Custom Popover Implementation -->
+
+<div class="container">
+  <div class="gridStyle">
+    <div *ngFor="let item of vehicleList; let i = index" class="vehicleDivStyle" (click)="handleOutsideClick($event, i)">
+      <div class="row" style="background-color:{{((selectedVehicleDetails && (item.vccstid==selectedVehicleDetails.vccstid))||((!selectedVehicleDetails)&& (item==selectedVehicleDetails)) )?'#E0E0E0':''}};">
+        <button tabindex="0" (click)="OnVehicleSelect(item)">
+          <div class="vehicleHeader">{{item.vehicleType}}</div>
+        </button>
+
+        <!-- Vehicle details -->
+        <div class="row">
+          <div class="col-md-5">
+            <img [src]="imageApiUrl" [alt]="item.vccstid" style="...">
+          </div>
+          <div class="col-md-7">
+            <h6 class="vehicleName">{{item.vehicleName}}</h6>
+            <div class="vehicleDetails">{{item.description}}</div>
+            <div class="vehicleDetails">Car Capacity: {{item.maxCapacity}}</div>
+            <div class="vehicleDetails">Recommended: {{item.recommendedCapacity}}</div>
+          </div>
+        </div>
+        <!-- Row ends -->
+        <span layout="row"><hr flex></span>
+
+        <!-- View Rates Popover -->
+        <div class="row">
+          <div class="col-md-12 rateStyle">
+            <button (click)="togglePopover(i)">View Rates</button>
+            <div *ngIf="isPopoverVisible(i)" class="custom-popover">
+              <div class="col-md-12 rateStyleTool">
+                <!-- Popover content goes here -->
+                <p>{{rateChartToDisplay}}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
 <div class="container mt-5">
   <button type="button" class="btn btn-primary" id="popover" data-bs-toggle="popover" title="Popover Title"
     data-bs-content="This is the popover content!" (click)="togglePopover($event)">
