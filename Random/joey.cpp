@@ -1,3 +1,36 @@
+<div class="EmailMain">
+  <!-- Conditionally display the input box when not rendering HTML -->
+  <div *ngIf="!renderAsHtml">
+    <tux-text-input required="true" label="Subject" placeholder="Input Subject" 
+                    [(ngModel)]="emailSubject">
+    </tux-text-input>
+    
+    <label class="tuxedo_label required">Body</label>
+    <tux-text-area id="text_area_counter" [(ngModel)]="emailData"></tux-text-area>
+  </div>
+  
+  <!-- Conditionally display the rendered HTML when rendering HTML -->
+  <div *ngIf="renderAsHtml">
+    <div class="rendered-content">
+      <h3>Subject:</h3>
+      <div [innerHTML]="emailSubject"></div>
+      
+      <h3>Body:</h3>
+      <div [innerHTML]="emailData"></div>
+    </div>
+  </div>
+</div>
+
+<div class="bottomSubmit">
+  <div class="onebutton">
+    <tux-button (click)="renderPreview()">
+      {{ renderAsHtml ? 'Edit Content' : 'Live Preview' }}
+    </tux-button>
+  </div>
+</div>
+
+
+
 // Component.ts
 
 export class YourComponent {
