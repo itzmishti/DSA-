@@ -1,3 +1,66 @@
+export class DateTimeUtils {
+    
+    /**
+     * Parses a date-time string in the format "YYYY-MM-DD HH:mm:ss" and returns a Date object.
+     * @param dateTime - The date-time string to be parsed.
+     * @returns The Date object.
+     */
+    static parseDateTime(dateTime: string): Date {
+        // Replace space between date and time with 'T' to match ISO format
+        const isoFormat = dateTime.replace(" ", "T") + "Z"; // Adding "Z" to denote UTC time
+        return new Date(isoFormat);
+    }
+
+    /**
+     * Calculates the time zone offset in minutes based on UTC and local time.
+     * @param utcDateTime - The UTC date-time string in the format "YYYY-MM-DD HH:mm:ss".
+     * @param localDateTime - The local date-time string in the format "YYYY-MM-DD HH:mm:ss".
+     * @returns The timezone offset in minutes (can be positive or negative).
+     */
+    static calculateTimeZoneOffset(utcDateTime: string, localDateTime: string): number {
+        // Parse the date-time strings
+        const utcDate = DateTimeUtils.parseDateTime(utcDateTime);
+        const localDate = DateTimeUtils.parseDateTime(localDateTime);
+
+        // Calculate the difference in milliseconds
+        const offsetMilliseconds = localDate.getTime() - utcDate.getTime();
+
+        // Convert the offset to minutes
+        const offsetMinutes = offsetMilliseconds / 60000;
+
+        return offsetMinutes;
+    }
+
+    /**
+     * Converts a local date-time to UTC based on the calculated time zone offset.
+     * @param localDateTime - The local date-time string in the format "YYYY-MM-DD HH:mm:ss".
+     * @param utcDateTime - The UTC date-time string in the format "YYYY-MM-DD HH:mm:ss".
+     * @returns The corresponding UTC date-time as an ISO string.
+     */
+    static convertToUTC(localDateTime: string, utcDateTime: string): string {
+        // Calculate the time zone offset
+        const timeZoneOffset = DateTimeUtils.calculateTimeZoneOffset(utcDateTime, localDateTime);
+
+        // Parse the local date-time string
+        const localDate = DateTimeUtils.parseDateTime(localDateTime);
+
+        // Adjust the local date by the offset to get the UTC date
+        const utcDate = new Date(localDate.getTime() - (timeZoneOffset * 60000));
+
+        // Return the UTC date-time as an ISO string
+        return utcDate.toISOString();
+    }
+}
+
+// Example usage:
+const utcDateTime = "2024-08-28 12:30:00";  // UTC date-time string
+const localDateTime = "2024-08-28 14:30:00";  // Local date-time string (e.g., UTC+2:00)
+const utcTime = DateTimeUtils.convertToUTC(localDateTime, utcDateTime);
+
+console.log("UTC Time:", utcTime);
+
+
+
 Here’s a concise breakdown of your points:
 
 ### General Enhancements
