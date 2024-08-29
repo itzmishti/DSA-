@@ -1,3 +1,32 @@
+
+
+const moment = require('moment-timezone');
+
+function convertSingaporeDateTimeToUTCAndLocal(date, time) {
+  const singaporeTimeZone = 'Asia/Singapore';
+  
+  // Parse the date-time in Singapore time zone
+  const singaporeMoment = moment.tz(`${date} ${time}`, singaporeTimeZone);
+  
+  // Convert to UTC
+  const utcDateTime = singaporeMoment.utc().format('YYYY-MM-DDTHH:mm:ss[Z]');
+  
+  // Convert to local time (India)
+  const localTimeZone = 'Asia/Kolkata'; // Local time zone (India)
+  const localDateTime = singaporeMoment.clone().tz(localTimeZone).format('YYYY-MM-DD HH:mm:ss');
+  
+  return { utcDateTime, localDateTime };
+}
+
+// Example usage
+const dateInSingapore = "2024-08-29";  // Date in Singapore
+const timeInSingapore = "16:00";  // 4 PM in Singapore
+const { utcDateTime, localDateTime } = convertSingaporeDateTimeToUTCAndLocal(dateInSingapore, timeInSingapore);
+
+console.log("UTC Date-Time:", utcDateTime);
+console.log("Local Date-Time:", localDateTime);
+
+
 export class DateTimeUtils {
     
     /**
