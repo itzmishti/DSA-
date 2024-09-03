@@ -1,5 +1,60 @@
+.counter-container {
+  display: flex;
+  align-items: center;
+}
+
+.counter-container button {
+  background-color: #f0f0f0;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+  font-size: 18px;
+}
+
+.counter-container input {
+  width: 50px;
+  text-align: center;
+  margin: 0 5px;
+  font-size: 18px;
+}
 
 
+import { Component } from '@angular/core';
+
+@Component({
+  selector: 'app-counter',
+  templateUrl: './counter.component.html',
+  styleUrls: ['./counter.component.css']
+})
+export class CounterComponent {
+  counterValue: number = 4;
+
+  increase() {
+    this.counterValue++;
+  }
+
+  decrease() {
+    if (this.counterValue > 1) {
+      this.counterValue--;
+    }
+  }
+
+  validateCounter() {
+    if (this.counterValue < 1 || isNaN(this.counterValue)) {
+      this.counterValue = 1;
+    }
+  }
+}
+
+
+
+
+
+<div class="counter-container">
+  <button (click)="decrease()">&#9664;</button>
+  <input type="number" [(ngModel)]="counterValue" (input)="validateCounter()" />
+  <button (click)="increase()">&#9654;</button>
+</div>
 const moment = require('moment-timezone');
 
 function convertSingaporeDateTimeToUTCAndLocal(date, time) {
