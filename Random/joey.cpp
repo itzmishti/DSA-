@@ -1,3 +1,95 @@
+<div *ngIf="selectedServiceIds.size > 0">
+  <h3>Selected Services:</h3>
+  <ul>
+    <li *ngFor="let service of serviceList" *ngIf="selectedServiceIds.has(service.id)">
+      {{ service.serviceName }}
+    </li>
+  </ul>
+</div>
+
+
+
+.multi-select-dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.multi-select-dropdown button {
+  padding: 8px 12px;
+  cursor: pointer;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  text-align: left;
+  width: 100%;
+}
+
+.multi-select-dropdown .dropdown-content {
+  display: block;
+  position: absolute;
+  background-color: #f9f9f9;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+  padding: 12px 16px;
+  border: 1px solid #ccc;
+  width: 100%;
+}
+
+.multi-select-dropdown .dropdown-content label {
+  display: block;
+  margin: 5px 0;
+}
+
+.multi-select-dropdown .dropdown-content input[type="checkbox"] {
+  margin-right: 8px;
+}
+
+
+
+export class MyComponent {
+  serviceList: Service[] = [
+    { id: 1, serviceName: 'Service A' },
+    { id: 2, serviceName: 'Service B' },
+    { id: 3, serviceName: 'Service C' },
+    // Add more services as needed
+  ];
+
+  selectedServiceIds: Set<number> = new Set<number>();
+  isDropdownOpen = false;
+
+  toggleDropdown() {
+    this.isDropdownOpen = !this.isDropdownOpen;
+  }
+
+  onCheckboxChange(serviceId: number, isChecked: boolean) {
+    if (isChecked) {
+      this.selectedServiceIds.add(serviceId);
+    } else {
+      this.selectedServiceIds.delete(serviceId);
+    }
+  }
+}
+
+
+<div class="multi-select-dropdown">
+  <button (click)="toggleDropdown()">
+    Select Services
+    <span *ngIf="selectedServiceIds.size > 0">({{ selectedServiceIds.size }} selected)</span>
+  </button>
+  <div *ngIf="isDropdownOpen" class="dropdown-content">
+    <label *ngFor="let service of serviceList">
+      <input 
+        type="checkbox" 
+        [value]="service.id" 
+        (change)="onCheckboxChange(service.id, $event.target.checked)" 
+        [checked]="selectedServiceIds.has(service.id)"
+      />
+      {{ service.serviceName }}
+    </label>
+  </div>
+</div>
+
+
+
 .counter-container {
   display: flex;
   align-items: center;
