@@ -1,3 +1,12 @@
+
+Aspect,Old System,New System
+Application Structure,Separate applications or tabs for each region, requiring users to manage multiple interfaces.,A single, unified application that consolidates all regions, streamlining the user experience.
+Super City Configuration,A single super city representing all cities in a regional pool, limiting localized control.,Multiple super cities, allowing more granular control and management tailored to each region’s needs.
+User Experience,Users needed to switch between different applications or tabs to access regional data, leading to potential delays and inefficiencies.,A unified interface provides seamless access to all regions, enhancing efficiency and ease of use.
+Data Management,Data was managed separately for each region, resulting in potential inconsistencies and increased management overhead.,Centralized data management across all regions, ensuring consistency and reducing administrative complexity.
+Time Zone Handling,Booking times were only available in the local time zone of the region, making cross-regional coordination challenging.,Booking times are now available in local time, UTC, and the actual regional time zone, improving cross-regional coordination and transparency.
+Scalability,Scalability was limited by the need to maintain and update separate systems for each region.,The unified system supports easier scaling, allowing for the seamless addition of new regions and features.
+
 <div *ngIf="selectedServiceIds.size > 0">
   <h3>Selected Services:</h3>
   <ul>
