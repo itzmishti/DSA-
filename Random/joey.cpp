@@ -1,4 +1,30 @@
 
+<button class="dropdown-button">
+  <span class="button-text">Button Text</span>
+  <span class="dropdown-arrow">▼</span>
+</button>
+
+
+.dropdown-button {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.button-text {
+  flex-grow: 1;
+  text-align: left;
+}
+
+.dropdown-arrow {
+  margin-left: 10px;
+}
 Aspect,Old System,New System
 Application Structure,Separate applications or tabs for each region, requiring users to manage multiple interfaces.,A single, unified application that consolidates all regions, streamlining the user experience.
 Super City Configuration,A single super city representing all cities in a regional pool, limiting localized control.,Multiple super cities, allowing more granular control and management tailored to each region’s needs.
