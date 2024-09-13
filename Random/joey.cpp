@@ -1,4 +1,42 @@
 
+import { ActivatedRoute } from '@angular/router';
+
+export class DestinationComponent {
+  myObject: any;
+
+  constructor(private route: ActivatedRoute) {}
+
+  ngOnInit() {
+    // Subscribe to the queryParams to get the data
+    this.route.queryParams.subscribe(params => {
+      if (params['data']) {
+        // Deserialize the object
+        this.myObject = JSON.parse(params['data']);
+        console.log(this.myObject);
+      }
+    });
+  }
+}
+
+
+
+import { Router } from '@angular/router';
+
+export class SourceComponent {
+  constructor(private router: Router) {}
+
+  redirectToAnotherPage() {
+    const myObject = { id: 123, name: 'Test Object' };
+
+    // Convert the object into a JSON string
+    const serializedObject = JSON.stringify(myObject);
+
+    // Pass the serialized object as a query parameter
+    this.router.navigate(['/destination'], { queryParams: { data: serializedObject } });
+  }
+}
+
+
 <button class="dropdown-button">
   <span class="button-text">Button Text</span>
   <span class="dropdown-arrow">▼</span>
