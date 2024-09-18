@@ -1,4 +1,137 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SharePoint SID Lookup</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f0f0;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+
+    .input-group {
+      margin-bottom: 20px;
+    }
+
+    .input-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: bold;
+      color: #333;
+    }
+
+    .input-group input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 16px;
+    }
+
+    .input-group button {
+      width: 100%;
+      padding: 10px;
+      background-color: #0078d7;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .input-group button:hover {
+      background-color: #005a9e;
+    }
+
+    .result {
+      margin-top: 20px;
+      background-color: #f9f9f9;
+      padding: 20px;
+      border-radius: 8px;
+      border: 1px solid #ddd;
+    }
+
+    .result p {
+      margin: 0 0 10px;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>SID Lookup</h1>
+
+    <!-- SID Input and Submit Button -->
+    <div class="input-group">
+      <label for="sidInput">Enter SID</label>
+      <input type="text" id="sidInput" placeholder="Enter SID">
+      <button onclick="submitSid()">Submit</button>
+    </div>
+
+    <!-- Result Section -->
+    <div id="result" class="result" style="display: none;">
+      <p><strong>First Name:</strong> <span id="firstName"></span></p>
+      <p><strong>Last Name:</strong> <span id="lastName"></span></p>
+      <p><strong>Job Title:</strong> <span id="jobTitle"></span></p>
+    </div>
+  </div>
+
+  <script>
+    // Function to redirect to InfoPath form with the SID in the query string
+    function submitSid() {
+      var sid = document.getElementById('sidInput').value;
+      if (sid) {
+        // Redirect to InfoPath form, passing SID in query string
+        window.location.href = '/sites/yoursite/Lists/YourList/NewForm.aspx?SID=' + encodeURIComponent(sid);
+      } else {
+        alert("Please enter a valid SID");
+      }
+    }
+
+    // Function to get query parameters from URL
+    function getQueryParam(param) {
+      var params = new URLSearchParams(window.location.search);
+      return params.get(param);
+    }
+
+    // On page load, populate the result section with values if available in the query string
+    document.addEventListener("DOMContentLoaded", function () {
+      var firstName = getQueryParam('firstName');
+      var lastName = getQueryParam('lastName');
+      var jobTitle = getQueryParam('jobTitle');
+      
+      if (firstName && lastName && jobTitle) {
+        document.getElementById('firstName').textContent = firstName;
+        document.getElementById('lastName').textContent = lastName;
+        document.getElementById('jobTitle').textContent = jobTitle;
+        document.getElementById('result').style.display = 'block';
+      }
+    });
+  </script>
+
+</body>
+</html>
+
+
+
 import { ActivatedRoute } from '@angular/router';
 
 export class DestinationComponent {
