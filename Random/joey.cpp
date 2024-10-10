@@ -1,4 +1,31 @@
 
+BMR testing notes
+- [ ] Credit card dropdown 
+- [ ] Default selection of service on modal 
+- [ ] Remove seconds from date picker 
+- [ ] City ID instead of city name 
+- [ ] Segment wise rate chart 
+- [ ] Phone number should autopppulate when booking second ride 
+- [ ] Auto select 1 for total passengers for specially abled, duty type within city 
+- [ ] Sponsored cost centre should clear the cost centre details 
+- [ ] Payment detail change is a bug 
+- [ ] Upcoming ride ,delete functionality it’s is not getting cancelled even when we click cancel 
+- [ ] Yes and no instead of cancel 
+- [ ] Edit option should be removed if ride is cancelled 
+- [ ] Icon for I on ride history page 
+- [ ] View ride history modal should show the options which are there for current workflow only , no extra fields 
+- [ ] Title from submitted to executed 
+- [ ] Destination city and origin city should be a part of template name 
+- [ ] Go back option from select vehicle page 
+- [ ] On edit of ride …. Check Time limit +5 should validate time even when we are not changing the date 
+- [ ] Upcoming ride —-> time check edit and delete should be disabled (discuss more on this )
+- [ ] Load template 
+- [ ] Select vehicle page -> fix css 
+
+
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
