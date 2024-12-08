@@ -411,25 +411,40 @@ function updateLOBDistribution(filteredData) {
 
 function updateGuestTrends(filteredData) {
     // Process data
+    // const trends = {};
+    // filteredData.forEach(row => {
+    //     const date = row.Modified.split('T')[0];
+    //     if (!trends[date]) trends[date] = 0;
+    //     trends[date] += parseInt(row.GuestCount) || 0;
+    // });
+
+    // const sortedDates = Object.keys(trends).sort();
+    // const guestData = sortedDates.map(date => trends[date]);
+
+    // // Calculate moving average for trend line
+    // const movingAveragePeriod = 7;
+    // const movingAverage = guestData.map((value, index, array) => {
+    //     const start = Math.max(0, index - movingAveragePeriod + 1);
+    //     const end = index + 1;
+    //     const subset = array.slice(start, end);
+    //     return subset.reduce((sum, val) => sum + val, 0) / subset.length;
+    // });
     const trends = {};
     filteredData.forEach(row => {
-        const date = row.Modified.split('T')[0];
-        if (!trends[date]) trends[date] = 0;
-        trends[date] += parseInt(row.GuestCount) || 0;
+        const date = parseCustomDate(row.Modified);
+        const dateStr = date.toISOString().split('T')[0]; // YYYY-MM-DD format for consistency
+        if (!trends[dateStr]) trends[dateStr] = 0;
+        trends[dateStr] += parseInt(row.GuestCount) || 0;
     });
 
     const sortedDates = Object.keys(trends).sort();
     const guestData = sortedDates.map(date => trends[date]);
 
-    // Calculate moving average for trend line
-    const movingAveragePeriod = 7;
-    const movingAverage = guestData.map((value, index, array) => {
-        const start = Math.max(0, index - movingAveragePeriod + 1);
-        const end = index + 1;
-        const subset = array.slice(start, end);
-        return subset.reduce((sum, val) => sum + val, 0) / subset.length;
+    // Format dates for display in chart
+    const formattedDates = sortedDates.map(date => {
+        const [year, month, day] = date.split('-');
+        return `${month}/${day}/${year}`;
     });
-
     Highcharts.chart('guestTrends', {
         chart: {
             type: 'area',
@@ -459,7 +474,7 @@ function updateGuestTrends(filteredData) {
             }
         },
         xAxis: {
-            categories: sortedDates,
+            categories: formattedDates,
             labels: {
                 rotation: -45,
                 style: {
@@ -587,6 +602,7 @@ function updateGuestTrends(filteredData) {
     });
 }
 
+
 function updateDashboard() {
     const filteredData = filterDataByDateRange();
     updateStats(filteredData); // Initial stats with no cost center selected
@@ -613,10 +629,11 @@ function filterDataByDateRange() {
 }
 
 function initializeDashboard() {
-    const dates = globalData.map(row => new Date(row.Modified));
+    const dates = globalData.map(row => parseCustomDate(row.Modified));
     const minDate = new Date(Math.min(...dates));
     const maxDate = new Date(Math.max(...dates));
     
+    // Format dates for input elements (YYYY-MM-DD format required by date inputs)
     document.getElementById('startDate').value = minDate.toISOString().split('T')[0];
     document.getElementById('endDate').value = maxDate.toISOString().split('T')[0];
     
@@ -625,6 +642,29 @@ function initializeDashboard() {
 
 function resetDateFilter() {
     initializeDashboard();
+}
+
+function parseCustomDate(dateString) {
+    // Handle MM/DD/YYYY HH:mm format
+    const [datePart, timePart] = dateString.split(' ');
+    const [month, day, year] = datePart.split('/');
+    const [hours, minutes] = timePart.split(':');
+    
+    return new Date(year, month - 1, day, hours, minutes);
+}
+
+function filterDataByDateRange() {
+    const startDate = new Date(document.getElementById('startDate').value);
+    const endDate = new Date(document.getElementById('endDate').value);
+    
+    // Set the time to start and end of day for proper comparison
+    startDate.setHours(0, 0, 0, 0);
+    endDate.setHours(23, 59, 59, 999);
+    
+    return globalData.filter(row => {
+        const rowDate = parseCustomDate(row.Modified);
+        return rowDate >= startDate && rowDate <= endDate;
+    });
 }
 </script>
 </body>
