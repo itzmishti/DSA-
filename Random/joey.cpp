@@ -128,6 +128,66 @@ document.getElementById('fileInput').addEventListener('change', function(e) {
     
     reader.readAsArrayBuffer(file);
 });
+
+// Function to convert Excel serial number to Date
+function excelSerialDateToJSDate(serialDate) {
+    const daysSince1970 = serialDate - 25569;
+    const millisecondsSince1970 = daysSince1970 * 24 * 60 * 60 * 1000;
+    return new Date(millisecondsSince1970);
+}
+
+// Function to format date as MM/DD/YYYY
+function formatDate(date) {
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const day = date.getDate().toString().padStart(2, '0');
+    const year = date.getFullYear();
+    return `${month}/${day}/${year}`;
+}
+
+document.getElementById('fileInput').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    const reader = new FileReader();
+    
+    reader.onload = function(e) {
+        const data = new Uint8Array(e.target.result);
+        const workbook = XLSX.read(data, {type: 'array'});
+        const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+        globalData = XLSX.utils.sheet_to_json(firstSheet);
+        
+        document.getElementById('uploadSection').style.display = 'none';
+        document.getElementById('dashboard').style.display = 'block';
+        
+        initializeDashboard();
+    };
+    
+    reader.readAsArrayBuffer(file);
+});
+
+function filterDataByDateRange() {
+    const startDate = new Date(document.getElementById('startDate').value);
+    const endDate = new Date(document.getElementById('endDate').value);
+    
+    // Set time to start and end of day
+    startDate.setHours(0, 0, 0, 0);
+    endDate.setHours(23, 59, 59, 999);
+    
+    return globalData.filter(row => {
+        const rowDate = excelSerialDateToJSDate(row.Modified);
+        return rowDate >= startDate && rowDate <= endDate;
+    });
+}
+
+function initializeDashboard() {
+    const dates = globalData.map(row => parseCustomDate(row.Modified));
+    const minDate = new Date(Math.min(...dates));
+    const maxDate = new Date(Math.max(...dates));
+    
+    // Format dates for date inputs (YYYY-MM-DD required by input type="date")
+    document.getElementById('startDate').value = minDate.toISOString().split('T')[0];
+    document.getElementById('endDate').value = maxDate.toISOString().split('T')[0];
+    
+    updateDashboard();
+}
 function updateStats(filteredData, selectedCostCenter = null) {
     let dataToUse = filteredData;
     
@@ -410,41 +470,50 @@ function updateLOBDistribution(filteredData) {
 }
 
 function updateGuestTrends(filteredData) {
+    console.log("Starting data processing");
+    
     // Process data
-    // const trends = {};
-    // filteredData.forEach(row => {
-    //     const date = row.Modified.split('T')[0];
-    //     if (!trends[date]) trends[date] = 0;
-    //     trends[date] += parseInt(row.GuestCount) || 0;
-    // });
-
-    // const sortedDates = Object.keys(trends).sort();
-    // const guestData = sortedDates.map(date => trends[date]);
-
-    // // Calculate moving average for trend line
-    // const movingAveragePeriod = 7;
-    // const movingAverage = guestData.map((value, index, array) => {
-    //     const start = Math.max(0, index - movingAveragePeriod + 1);
-    //     const end = index + 1;
-    //     const subset = array.slice(start, end);
-    //     return subset.reduce((sum, val) => sum + val, 0) / subset.length;
-    // });
-    const trends = {};
+    const trends = new Map();
+    
     filteredData.forEach(row => {
-        const date = parseCustomDate(row.Modified);
-        const dateStr = date.toISOString().split('T')[0]; // YYYY-MM-DD format for consistency
-        if (!trends[dateStr]) trends[dateStr] = 0;
-        trends[dateStr] += parseInt(row.GuestCount) || 0;
+        try {
+            // Convert Excel serial date to JS Date
+            const dateObj = excelSerialDateToJSDate(row.Modified);
+            const dateKey = formatDate(dateObj);
+            console.log("Processing date:", row.Modified, "->", dateKey);
+            
+            // Accumulate guest count for this date
+            const currentCount = trends.get(dateKey) || 0;
+            const guestCount = parseInt(row.GuestCount) || 0;
+            trends.set(dateKey, currentCount + guestCount);
+        } catch (error) {
+            console.error("Error processing row:", row, error);
+        }
     });
 
-    const sortedDates = Object.keys(trends).sort();
-    const guestData = sortedDates.map(date => trends[date]);
+    // Convert to arrays and sort
+    const sortedEntries = Array.from(trends.entries())
+        .sort((a, b) => {
+            const [monthA, dayA, yearA] = a[0].split('/').map(Number);
+            const [monthB, dayB, yearB] = b[0].split('/').map(Number);
+            return new Date(yearA, monthA - 1, dayA) - new Date(yearB, monthB - 1, dayB);
+        });
 
-    // Format dates for display in chart
-    const formattedDates = sortedDates.map(date => {
-        const [year, month, day] = date.split('-');
-        return `${month}/${day}/${year}`;
+    const sortedDates = sortedEntries.map(entry => entry[0]);
+    const guestData = sortedEntries.map(entry => entry[1]);
+
+    console.log("Processed dates:", sortedDates);
+    console.log("Processed counts:", guestData);
+
+    // Calculate moving average
+    const movingAveragePeriod = 7;
+    const movingAverage = guestData.map((value, index, array) => {
+        const start = Math.max(0, index - movingAveragePeriod + 1);
+        const end = index + 1;
+        const subset = array.slice(start, end);
+        return Math.round(subset.reduce((sum, val) => sum + val, 0) / subset.length);
     });
+
     Highcharts.chart('guestTrends', {
         chart: {
             type: 'area',
@@ -474,7 +543,7 @@ function updateGuestTrends(filteredData) {
             }
         },
         xAxis: {
-            categories: formattedDates,
+            categories: sortedDates,
             labels: {
                 rotation: -45,
                 style: {
@@ -495,6 +564,7 @@ function updateGuestTrends(filteredData) {
                     fontSize: '14px'
                 }
             },
+            min: 0,
             gridLineColor: 'rgba(224, 224, 224, 0.5)',
             labels: {
                 style: {
@@ -517,7 +587,7 @@ function updateGuestTrends(filteredData) {
             area: {
                 fillOpacity: 0.3,
                 marker: {
-                    enabled: false,
+                    enabled: true,
                     symbol: 'circle',
                     radius: 4,
                     states: {
@@ -530,12 +600,6 @@ function updateGuestTrends(filteredData) {
                     hover: {
                         lineWidth: 3
                     }
-                }
-            },
-            series: {
-                pointStart: 0,
-                animation: {
-                    duration: 1500
                 }
             }
         },
@@ -569,40 +633,9 @@ function updateGuestTrends(filteredData) {
                     lineWidth: 3
                 }
             }
-        }],
-        legend: {
-            enabled: true,
-            align: 'center',
-            verticalAlign: 'bottom',
-            itemStyle: {
-                color: '#2c3e50',
-                fontWeight: 'normal'
-            },
-            itemHoverStyle: {
-                color: '#34495e'
-            }
-        },
-        credits: {
-            enabled: false
-        },
-        responsive: {
-            rules: [{
-                condition: {
-                    maxWidth: 500
-                },
-                chartOptions: {
-                    legend: {
-                        layout: 'horizontal',
-                        align: 'center',
-                        verticalAlign: 'bottom'
-                    }
-                }
-            }]
-        }
+        }]
     });
 }
-
-
 function updateDashboard() {
     const filteredData = filterDataByDateRange();
     updateStats(filteredData); // Initial stats with no cost center selected
@@ -618,22 +651,25 @@ window.resetDashboard = function() {
     initializeDashboard();
 };
 
+// Update the filter function as well
 function filterDataByDateRange() {
     const startDate = new Date(document.getElementById('startDate').value);
     const endDate = new Date(document.getElementById('endDate').value);
     
+    startDate.setHours(0, 0, 0, 0);
+    endDate.setHours(23, 59, 59, 999);
+    
     return globalData.filter(row => {
-        const rowDate = new Date(row.Modified);
+        const rowDate = excelSerialDateToJSDate(row.Modified);
         return rowDate >= startDate && rowDate <= endDate;
     });
 }
 
 function initializeDashboard() {
-    const dates = globalData.map(row => parseCustomDate(row.Modified));
+    const dates = globalData.map(row => excelSerialDateToJSDate(row.Modified));
     const minDate = new Date(Math.min(...dates));
     const maxDate = new Date(Math.max(...dates));
     
-    // Format dates for input elements (YYYY-MM-DD format required by date inputs)
     document.getElementById('startDate').value = minDate.toISOString().split('T')[0];
     document.getElementById('endDate').value = maxDate.toISOString().split('T')[0];
     
@@ -644,28 +680,7 @@ function resetDateFilter() {
     initializeDashboard();
 }
 
-function parseCustomDate(dateString) {
-    // Handle MM/DD/YYYY HH:mm format
-    const [datePart, timePart] = dateString.split(' ');
-    const [month, day, year] = datePart.split('/');
-    const [hours, minutes] = timePart.split(':');
-    
-    return new Date(year, month - 1, day, hours, minutes);
-}
 
-function filterDataByDateRange() {
-    const startDate = new Date(document.getElementById('startDate').value);
-    const endDate = new Date(document.getElementById('endDate').value);
-    
-    // Set the time to start and end of day for proper comparison
-    startDate.setHours(0, 0, 0, 0);
-    endDate.setHours(23, 59, 59, 999);
-    
-    return globalData.filter(row => {
-        const rowDate = parseCustomDate(row.Modified);
-        return rowDate >= startDate && rowDate <= endDate;
-    });
-}
 </script>
 </body>
 </html>
