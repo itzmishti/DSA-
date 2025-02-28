@@ -1,25 +1,42 @@
 <style>
-/* Make the title sticky at the top */
-.block-container > div:first-child {
+/* Page container adjustments */
+.main .block-container {
+    display: flex;
+    flex-direction: column;
+    height: 98vh;
+    padding: 0;
+}
+
+/* Title styling */
+h1 {
+    padding: 1rem 0;
+    background-color: #262730;
     position: sticky;
     top: 0;
-    background-color: #262730;
     z-index: 999;
-    padding: 1rem 0;
+    margin: 0;
 }
 
-/* Create a container for chat messages with fixed height */
-.stChatMessageContent {
-    max-height: 70vh;
+/* Create scrollable area for chat with fixed height */
+[data-testid="stVerticalBlock"] > div:nth-of-type(1) {
+    height: 70vh;
     overflow-y: auto;
-    padding-bottom: 20px;
+    display: flex;
+    flex-direction: column;
 }
 
-/* Ensure the input area stays at the bottom */
-.stTextInput, .stButton {
+/* Input area fixed at bottom */
+[data-testid="stVerticalBlock"] > div:nth-of-type(2) {
     position: sticky;
-    bottom: 20px;
-    padding-top: 10px;
+    bottom: 0;
     background-color: #262730;
+    padding: 1rem 0;
+    margin-top: auto;
+    border-top: 1px solid #4e4e4e;
+}
+
+/* Make sure text input and button are easily visible */
+.stTextInput, .stButton {
+    padding: 0.5rem;
 }
 </style>
