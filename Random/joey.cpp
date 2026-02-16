@@ -95,3 +95,28 @@ Impact line (bold):
 Existing transport is strong — but not optimized for flexibility and scale.
 
 
+
+
+
+  6. Business Value Section (RIGHT side, VERY IMPORTANT)
+Title: Business Impact
+Use numbers format:
+For Employees • More flexible commute options
+* Reduced travel stress
+* Faster and more convenient commute
+For Company • Reduces need for future cab expansion
+* Optimizes existing commute infrastructure
+* Improves employee satisfaction and retention
+For Sustainability • Fewer total vehicle trips
+* Reduced emissions
+* Supports ESG goals
+
+
+
+Title: Strategic Advantage
+* Reduces future commute infrastructure pressure
+* Improves operational efficiency
+* Creates scalable commute ecosystem
+* Zero infrastructure expansion required
+
+
