@@ -15,3 +15,70 @@ Companies spend crores on parking and sustainability reporting. Our platform red
   A smart internal platform that connects employees traveling similar routes and enables flexible, safe, and efficient ride sharing.
   A closed-loop, verified ecosystem for internal employees, turning commuting into a shared social experience.
 
+
+“Unlocking Hidden Commute Capacity Within Our Workforce”
+“Optimizing Commute Without Adding New Infrastructure”
+“The Missing Layer in Our Office Transport System”
+
+
+“Making Employee Commute Smarter, Not Bigger
+
+
+
+
+Key features (icons + short text):
+* Office-verified employees only
+* Smart route-based matching
+* Complements shuttle and cab systems
+* Flexible real-time ride coordination
+* Safe, trusted, internal network
+
+
+
+
+Title: What Makes This Unique
+* Built exclusively for our employees
+* Enhances existing shuttle and cab system
+* No new vehicles or infrastructure required
+* Scales automatically with employee growth
+Bold line:
+We are unlocking unused capacity that already exists.
+
+
+
+
+  Mvp:
+
+Employee login
+Create ride
+Join ride
+Matching suggestions (gth)
+Tracking
+Rewards points
+ESG tracking basic
+
+Implementation Roadmap (Timeline graphic)
+
+Phase 1 — Pilot (Small group)
+Phase 2 — Expand (Based on adoption)
+Phase 3 — Full integration with existing commute
+
+Timeline example:
+Pilot → 2 months
+Scale → 3–6 months
+Full rollout → 6–12 months
+
+
+
+  13. Poster Layout Structure (Exact order)
+Top: Headline
+Upper left: Problem
+Upper center: Solution
+Upper right: Business impact
+Middle: How it works diagram
+Lower left: Secret sauce
+Lower center: Roadmap
+Lower right: Strategic advantage
+Bottom: The Ask + Vision
+
+
