@@ -82,3 +82,16 @@ Lower right: Strategic advantage
 Bottom: The Ask + Vision
 
 
+
+
+  itle: The Hidden Inefficiency
+Use 3–5 sharp bullet points:
+* Shuttle and cab routes are fixed and inflexible
+* Employees often walk 1–2 km to pickup points
+* Many employees still drive alone to office
+* Empty seats exist in employee vehicles every day
+* Commute infrastructure cost increases as company grows
+Impact line (bold):
+Existing transport is strong — but not optimized for flexibility and scale.
+
+
