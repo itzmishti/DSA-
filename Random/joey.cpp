@@ -9,3 +9,9 @@ include problem,solution,benifits,feasiblity in deck with graphs
 
 
 Companies spend crores on parking and sustainability reporting. Our platform reduces parking demand, cuts carbon emissions, and saves employees money — all while improving employee experience.
+
+
+
+  A smart internal platform that connects employees traveling similar routes and enables flexible, safe, and efficient ride sharing.
+  A closed-loop, verified ecosystem for internal employees, turning commuting into a shared social experience.
+
